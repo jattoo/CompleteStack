@@ -1,0 +1,89 @@
+Tehtävä 0.1:
+	
+	A: Html-skeleton:
+	<html>
+	<head>
+ 	 	<link rel="stylesheet" type="text/css" href="/anna_menna.css" />  		
+	</head>
+	<body>
+  		<div class='container'>
+    			<h1>Muistiinpanot</h1>
+    		<div id='notes'>   		
+	</body>
+	</html>
+
+	B: css-skeleton:
+		anna_menna.css:
+		
+		.container {
+  		padding: 10px;
+ 		border: 1px solid
+		}
+
+		.notes {
+  		color: blue;
+		}
+
+
+Tehtävä 0.2:
+
+	<form action='/new_note' method='POST'>
+      		<input type="text" name="note"><br>
+      		<input type="submit" value="Talleta">
+    	</form>
+
+
+
+
+Tehtävä 0.3:
+
+Käyttäja Navigoi --> https://fullstack-exampleapp.herokuapp.com/notes
+	
+	Selain -> palvelin:
+		-selain tekee palvelin pyynöön GET kommennolla/metodilla
+	Palvelin -> Selain:
+		-palvelin vastaa response koodilla 200 joka tarkoittaa että pyyntö on
+		onnistunut. Kun katsotaan konsoolin network osiossa, niin näkee millä 
+		koodilla palvelin on vastannut seläimen pyytöön.
+
+
+	
+Tehtävä 0.4:
+
+Käyttäjä -> syöttää teksti -> painaa Talleta
+
+	Selain -> Palvelin:
+		- Selain lahettaa lomakkeen tekstikennan arvoa palvelimelle POST metodilla
+		palvelimen new_notes osoitteeseen.
+	Palvelin -> Selain:
+		-Palvelin vastaa responkoodilla 302 joka tarkoittaa palvelin ohjaa uudelleen.
+		-Palvelin käskee selain tekeemaan uuden GET -pyynnön notes sijainnissa.
+		-Selain lataa sivu uudelleen ja samalla lataa resursit (main.css, main.js ja 
+		data.json). Uudenlatauksen arvoa myös näkyy latauksen jälkeen.
+
+
+
+Tehtävä 0.5:
+
+Käyttäjä Navigoi --> https://fullstack-exampleapp.herokuapp.com/spa
+
+	Selain -> Palvelin:
+		-Selain tekee palvelin pyynnön GET metodilla
+	Palvelin -> Selain:
+		-Palvelin vastaa response koodilla 200
+
+
+
+Tehtävä 0.6:
+
+Käyttäjä -> syöttää teksti -> painaa Talleta
+
+	Selain -> palvelin:
+		-Selain lähettää vain 1 pyyntöä palvelimelle POST metodilla osoitteeseen
+		new_notes_spa jossa on kaikki tarvittava resurssit mukana esim. lomake 
+		tekstikennän arvoa ja päivämäärä.
+	Palvelin -> Selain:
+		-Palvelin vastaa response koodilla 201 joka tarkoittaa että pyyntöä on
+		vastaanottettu ja uuden arvon on luotu. Javascript koodi hoitaa uuden 
+		arvon lataamista sivuun ja meille näkyy uuden listan.
+		
