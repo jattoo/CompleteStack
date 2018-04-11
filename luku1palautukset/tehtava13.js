@@ -9,25 +9,11 @@ const Otsikko = (props) => {
 }
 
 
-const Osa = (props) => {
-    return (
-        <p>{props.nimi} {props.snimi}</p>
-    )
-}
 
 const Sisalto = (props) => {
-    const osa1 = "Reactin perusteet "
-    const tehtavia1 = 10
-    const osa2 = "Tiedonv\u00e4litys propseilla "
-    const tehtavia2 = 7
-    const osa3 = "Komponenttien tila"
-    const tehtavia3 = 14
-
     return (
         <div>
-            <Osa nimi={osa1} snimi={tehtavia1} />
-            <Osa nimi={osa2} snimi={tehtavia2} />
-            <Osa nimi={osa3} snimi={tehtavia3} />
+            <p>{props.osa} {props.tehtavia}</p>
         </div>
     )
 }
@@ -47,13 +33,12 @@ const App = () => {
     //utf-8 merkit oikein
     const sana1 = 'Yhteens\u00e4'
     const sana2 = 'teht\u00e4v\u00e4\u00e4'
-
     const Osa1 = {
         nimi: 'Reactin perusteet',
         tehtavia: 10
     }
     const Osa2 = {
-        nimi: 'Tiedonvälitys propseilla',
+        nimi: 'Tiedonv\u00e4litys propseilla',
         tehtavia: 7
     }
     const Osa3 = {
@@ -68,10 +53,13 @@ const App = () => {
 
         return yhteensa
     }
+
     return (
         <div>
             <Otsikko kurssi={kurssi} />
-            <Sisalto />
+            <Sisalto osa={Osa1.nimi} tehtavia={Osa1.tehtavia} />
+            <Sisalto osa={Osa2.nimi} tehtavia={Osa2.tehtavia} />
+            <Sisalto osa={Osa3.nimi} tehtavia={Osa3.tehtavia} />
             < Yhteensa sana1={sana1} kaikki={<YhteenLasku />} sana2={sana2} />
         </div>
     )
