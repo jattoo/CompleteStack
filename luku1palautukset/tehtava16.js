@@ -37,7 +37,7 @@ class App extends React.Component {
         return (
             <div>
                 <div>
-                    <p><b>{'ARVOKAS ASIAKAS ANNA PALAUTETTA'}</b></p>
+                    <h1>{'ARVOKAS ASIAKAS ANNA PALAUTETTA'}</h1>
                 </div>
 
                 <button onClick={this.hyvaPalauteet}>HYVAA</button>
@@ -47,7 +47,7 @@ class App extends React.Component {
                 {<br />}
 
                 <div>
-                    <p><b>{'UNICAFEEN ASIAKAS PALAUTE STATISTIIKKA'}</b></p>
+                    <h3>{'UNICAFEEN ASIAKAS PALAUTE STATISTIIKKA'}</h3>
                     {'Hyv\u00e4\u00e4: '} {this.state.hyva}{<br />}
                     {'Huono: '} {this.state.huono}{<br />}
                     {'Neutraali: '} {this.state.neutrali}{<br />}
