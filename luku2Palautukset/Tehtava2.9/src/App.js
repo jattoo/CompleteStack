@@ -90,7 +90,7 @@ class App extends React.Component {
           <form onSubmit = {this.lisaaNimi}>
             <div>
               <b>Rajaa Näytettävä Nimi: </b> 
-              <input  value = {this.state.showthis} onChange={this.showMe}/><br/>
+              <input onChange={this.showMe}/><br/>
               <br/>
             </div>
             
@@ -126,7 +126,7 @@ class App extends React.Component {
             <div>
               <b>Rajaa Näytettävä Nimi: </b> 
               <input 
-              value = {this.state.showthis} onChange={this.showMe}/><br/>
+               onChange={this.showMe}/><br/>
               <br/>
             </div>
             
