@@ -17,8 +17,7 @@ class App extends React.Component {
       persons: name,
       newName: '',
       numero: '',
-      canRender: false,
-      safeHouse: []
+      canRender: '',
     }
     //fuktioiden bindit
     this.lisaaNimi = this.lisaaNimi.bind(this)
@@ -44,7 +43,6 @@ class App extends React.Component {
   }
 
   //Funktio antaa logiikka ja yleis toimintoja uuden käyttäjän lisääminen 
-  
   voiLisata = (now, s, w) => {
    if (!now.find(f => f.name === s)){
      this.setState({ persons : w})
@@ -55,17 +53,10 @@ class App extends React.Component {
   //funktio palauttaa arvon jos käyttäjä tekee etsintoja
   showMe = (e) => {
     e.preventDefault()
-    const kasitelty = this.state.persons.filter(f => f.name === e.target.value)
-    if (e.target.value.length > 0){
-      if (this.state.persons.filter(f => f.name === e.target.value)){
-        this.state.safeHouse.pop(0)
-        const finaali = this.state.safeHouse.concat(kasitelty)
-        this.setState({
-          safeHouse : finaali,
-          canRender: true
-        })
-      }
-    }
+    this.setState({
+      canRender: e.target.value.substr(0,20)
+    })
+    
     
   }
 
@@ -79,86 +70,49 @@ class App extends React.Component {
     }
     const lisatavaNimi = this.state.persons.concat(taulukko)
     this.voiLisata(this.state.persons, this.state.newName, lisatavaNimi)
+
   }
   
   render() {
-    //Tilapainen renderointi
-    if (this.state.canRender){
-      return (
-        <div>
-          <h2>Puhelinluettelo</h2>
-          <form onSubmit = {this.lisaaNimi}>
-            <div>
-              <b>Rajaa Näytettävä Nimi: </b> 
-              <input onChange={this.showMe}/><br/>
-              <br/>
-            </div>
-            
-            <div>
-              <b>Lisää Uusi Nimi: </b><br/>
-              <br/>
-            
-              <b>Nimi:</b> 
-              <input value = {this.state.newName}  onChange={this.kasitele}/>
-            </div>
-            
-            <div>
-              <b>Numero:</b> 
-              <input value = {this.state.numero} onChange ={this.addNumber}/> 
-            </div>
-            
-            <div>
+    const showResults = this.state.persons.filter(f => f.name.toLowerCase().indexOf(this.state.canRender) !== -1)
+    const decision = showResults ? showResults : this.state.persons
+    
+    return (
+      <div>
+        <h2>Puhelinluettelo</h2>
+        <form onSubmit = {this.lisaaNimi}>
+         <div>
+            <b>Rajaa Näytettävä Nimi: </b> 
+            <input 
+            onChange={this.showMe}/><br/>
             <br/>
-              <button type="submit" ><b>Lisää</b></button>
-            </div>
-          </form>
-          <div>
-          <h2>Numerot</h2>
-          <b>{this.state.safeHouse.map(sf => <p key = {sf.id}>{sf.name} {sf.numero}</p>)}</b>
-          </div>
         </div>
-      )
-    } else {
-      return (
+            
         <div>
-          <h2>Puhelinluettelo</h2>
-          <form onSubmit = {this.lisaaNimi}>
-            <div>
-              <b>Rajaa Näytettävä Nimi: </b> 
-              <input 
-               onChange={this.showMe}/><br/>
-              <br/>
-            </div>
+          <b>Lisää Uusi Nimi: </b><br/>
+          <br/>
             
-            <div>
-              <b>Lisää Uusi Nimi: </b><br/>
-              <br/>
-            
-              <b>Nimi:</b> 
-              <input value = {this.state.newName}  onChange={this.kasitele}/>
-            </div>
-            
-            <div>
-              <b>Numero:</b> 
-              <input value = {this.state.numero}  onChange ={this.addNumber}/> 
-            </div>
-            
-            <div>
-            <br/>
-              <button type="submit" ><b>Lisää</b></button>
-            </div>
-          </form>
-          <div>
-          <h2>Numerot</h2>
-          <b>{this.state.persons.map(p => <p key = {p.id}>{p.name} {p.numero}</p>)}</b>
-          </div>
+          <b>Nimi:</b> 
+          <input value = {this.state.newName}  onChange={this.kasitele}/>
         </div>
+            
+        <div>
+            <b>Numero:</b> 
+            <input value = {this.state.numero}  onChange ={this.addNumber}/> 
+        </div>
+            
+        <div>
+          <br/>
+            <button type="submit" ><b>Lisää</b></button>
+        </div>
+        </form>
+        <div>
+        <h2>Numerot</h2>
+        <b>{decision.map(p => <p key = {p.id}>{p.name} {p.numero}</p>)}</b>
+        </div>
+      </div>
       )
     }
-
-    }
-    
-    
 }
 
 
