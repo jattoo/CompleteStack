@@ -70,7 +70,10 @@ class App extends React.Component {
     }
     const lisatavaNimi = this.state.persons.concat(taulukko)
     this.voiLisata(this.state.persons, this.state.newName, lisatavaNimi)
-
+    this.setState({
+      newName: '',
+      numero:''
+    })
   }
   
   render() {
