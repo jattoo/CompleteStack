@@ -4,64 +4,33 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
+const blogRouter = require('./controllers/notes')
+const middleware = require('./utils/middleware')
+
+
+if (process.env.NODE_ENV !== 'production'){
+    require('dotenv').config()
+}
+console.log(process.env.MONGODB_URI)
+//yhteys kannan väliin muodestettään täällä
+mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => {
+        console.log('Connection established', process.env.MONGODB_URI)
+    })
+    .catch(error => {
+        console.log(error)
+    })
 
 app.use(bodyParser.json())
 app.use(cors())
-
-morgan.token('body', function(req, res) {
-    const body = req.body
-    return body
-})
-
 app.use(morgan('dev'))
-
-const mongoUrl = 'mongodb://<user>:<pass>@ds147440.mlab.com:47440/bloklist'
-mongoose.connect(mongoUrl)
-
-
-//Ulkonäon formatointi
-const looksAndFeel = (obj) => {
-    return {
-        id: obj._id,
-        title: obj.title,
-        author: obj.author,
-        likes: obj.likes,
-        url: obj.url
-    }
-}
+app.use(middleware.logger)
+app.use('/api/blogs', blogRouter)
 
 
-const Blog = mongoose.model('Blog', {
-    title: String,
-    author: String,
-    url: String,
-    likes: Number
-})
 
-module.exports = Blog
-
-
-app.get('/api/blogs', (request, response) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs.map(looksAndFeel))
-    })
-})
-
-app.post('/api/blogs', (request, response) => {
-    const blog = new Blog(request.body)
-    console.log('Adding: ',blog)
-
-    blog
-        .save()
-        .then(result => {
-        response.status(201).json(result)
-        })
-    
-})
-
-const PORT = 3003
+const PORT = process.env.PORT ||  3003
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 
