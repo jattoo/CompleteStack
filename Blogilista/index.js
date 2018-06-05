@@ -15,7 +15,7 @@ morgan.token('body', function(req, res) {
 
 app.use(morgan('dev'))
 
-const mongoUrl = 'mongodb://moe:mango70m@ds147440.mlab.com:47440/bloklist'
+const mongoUrl = 'mongodb://<user>:<pass>@ds147440.mlab.com:47440/bloklist'
 mongoose.connect(mongoUrl)
 
 
