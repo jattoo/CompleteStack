@@ -11,12 +11,11 @@ const middleware = require('./utils/middleware')
 if (process.env.NODE_ENV !== 'production'){
     require('dotenv').config()
 }
-console.log(process.env.MONGODB_URI)
 //yhteys kannan väliin muodestettään täällä
 mongoose
     .connect(process.env.MONGODB_URI)
     .then(() => {
-        console.log('Connection established', process.env.MONGODB_URI)
+        console.log('Connection established to the database')
     })
     .catch(error => {
         console.log(error)
