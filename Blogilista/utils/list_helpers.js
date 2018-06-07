@@ -3,4 +3,10 @@ const dummy = (blogs) => {
     return  1
 }
 
-module.exports = {dummy}
+//tykkäyksiä
+const totalLikes = (blogs) => {
+    return blogs[0].likes
+}
+
+
+module.exports = {dummy, totalLikes}
