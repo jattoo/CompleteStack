@@ -52,7 +52,7 @@ describe('favorite blog', () => {
           __v: 0
         }  
       ]
-    test.only('based on amount of likes', () => {
+    test('based on amount of likes', () => {
         const result= listHelper(blogs)
         const copy = {
             title : "Canonical string reduction",
