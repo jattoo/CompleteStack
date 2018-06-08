@@ -14,7 +14,8 @@ const format = (obj) => {
         author: obj[0].author,
         likes: obj[0].likes
     }
-}
+}    
+   
 //suosikkeja
 const favoriteBlog = (blogs) => {
     let highest = 0
@@ -25,4 +26,36 @@ const favoriteBlog = (blogs) => {
     console.log('test ', copyofTest)
     return copyofTest
 }
-module.exports = {dummy, totalLikes, favoriteBlog}
+const looks = (hw, h) => {
+    return {
+        author: hw,
+        blogs : h
+    }
+}
+
+//mostblog writer
+const mostBlog = (blogs) => {
+    let highest = 0
+    let hwriter = ''
+    
+    const test = blogs.map(m => 
+       { if(m.author === m.author){
+            hwriter = m.author
+            }
+        }
+    )
+    const findAmount = blogs.filter(f => {
+        if(f.author === hwriter){
+            highest += 1
+        }
+    })
+    const copy = looks(hwriter, highest)
+    console.log('author: ', copy)
+    return copy
+}
+module.exports = {
+    dummy, 
+    totalLikes, 
+    favoriteBlog,
+    mostBlog
+}
