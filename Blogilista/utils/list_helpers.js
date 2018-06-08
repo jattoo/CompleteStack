@@ -23,7 +23,7 @@ const favoriteBlog = (blogs) => {
 
     const test = blogs.filter(f => f.likes === highest)
     const copyofTest = format(test)
-    console.log('test ', copyofTest)
+    console.log('favorite blog: ', copyofTest)
     return copyofTest
 }
 const looks = (hw, h) => {
@@ -50,12 +50,43 @@ const mostBlog = (blogs) => {
         }
     })
     const copy = looks(hwriter, highest)
-    console.log('author: ', copy)
+    console.log('Enemmän blogeja: ', copy)
     return copy
 }
+const shape = (hw, h) => {
+    return {
+        author: hw,
+        likes : h
+    }
+}
+
+//mostLikes kirjoittaja
+const mostLikes = (blogs) => {
+    let highest = 0
+    let tLikes = 0
+    
+    //etsitään kenellä on suurin like
+    blogs.map(m => m.likes > highest ? highest = m.likes : m.likes)
+
+    //etsitään edellisen perusteella isonin tykkäyksen saajan nimen
+    const writer = blogs.filter(f => f.likes === highest)
+    
+    //nimen perusteella nyt tehdään like:n yhteenlasku
+    blogs.map(sm => {
+        if(sm.author === writer[0].author){
+            tLikes += sm.likes
+        }
+    })
+    
+    const copy = shape(writer[0].author, tLikes)
+    console.log('mostlike: ', copy)
+    return copy
+}
+
 module.exports = {
     dummy, 
     totalLikes, 
     favoriteBlog,
-    mostBlog
+    mostBlog,
+    mostLikes
 }
