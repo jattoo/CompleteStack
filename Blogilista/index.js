@@ -1,3 +1,4 @@
+const http = require('http')
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -6,16 +7,14 @@ const mongoose = require('mongoose')
 const morgan = require('morgan')
 const blogRouter = require('./controllers/notes')
 const middleware = require('./utils/middleware')
+const config = require('./utils/config')
 
 
-if (process.env.NODE_ENV !== 'production'){
-    require('dotenv').config()
-}
 //yhteys kannan väliin muodestettään täällä
 mongoose
-    .connect(process.env.MONGODB_URI)
+    .connect(config.mongoUrl)
     .then(() => {
-        console.log('Connection established to the database')
+        console.log('Connection established to db', config.mongoUrl)
     })
     .catch(error => {
         console.log(error)
@@ -27,10 +26,16 @@ app.use(morgan('dev'))
 app.use(middleware.logger)
 app.use('/api/blogs', blogRouter)
 
+const server = http.createServer(app)
 
 
-const PORT = process.env.PORT ||  3003
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+server.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`)
 
 })
+
+server.on('close', () => {
+    mongoose.connection.close()
+})
+
+module.exports= {app, server}

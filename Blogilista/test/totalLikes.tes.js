@@ -1,7 +1,7 @@
 //require our test funtion
 const listHelper = require('../utils/list_helper').totalLikes
 
-describe('total likes', () => {
+describe.skip('total likes', () => {
     const listWithOneBlog = [
         {
             _id: '5a422aa71b54a676234d17f8',

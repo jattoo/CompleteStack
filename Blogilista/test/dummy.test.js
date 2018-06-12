@@ -2,7 +2,7 @@
 const listHelper = require('../utils/list_helper').dummy
 
 //Tuloksen muokaillu
-describe ('dummy', () => {
+describe.skip('dummy', () => {
     //ensimmäinen test
     test('dummy is called', () => {
         const blogs = []
