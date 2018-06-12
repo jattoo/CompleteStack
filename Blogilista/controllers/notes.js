@@ -21,16 +21,23 @@ blogRouter.get('/', async (req, res) => {
 })
 
 
-//tapahtumakäsittelija joka lisää blogit
-blogRouter.post('/', (request, response) => {
-    const blog = new Blog(request.body)
-
-    blog
-        .save()
-        .then(result => {
-            response.status(201).json(result)
+//blogilistan testit, osa 2
+blogRouter.post('/', async (req, res) => {
+    try {
+        const body = req.body
+        const blog = new Blog({
+            title: body.title,
+            author : body.autho,
+            likes : body.likes,
+            url : body.url
         })
-    
+        const savedBlogs = await blog.save()
+        res.json(looksAndFeel(blog))
+    }catch(exception) {
+        console.log(exception)
+        res.status(500).json({error : 'Bra something fought back..'})
+    }
 })
+
 
 module.exports=blogRouter
