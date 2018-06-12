@@ -14,14 +14,10 @@ const looksAndFeel = (obj) => {
     }
 }
 
-
-//tapahtumakäsittelija joka palautta kaikki
-blogRouter.get('/', (request, response) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs.map(looksAndFeel))
-    })
+//blogilistan testit, osa 1
+blogRouter.get('/', async (req, res) => {
+    const kaikkiBlokit = await Blog.find({})
+    res.json(kaikkiBlokit.map(looksAndFeel))
 })
 
 
@@ -32,7 +28,7 @@ blogRouter.post('/', (request, response) => {
     blog
         .save()
         .then(result => {
-        response.status(201).json(result)
+            response.status(201).json(result)
         })
     
 })
