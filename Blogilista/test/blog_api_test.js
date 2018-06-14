@@ -40,8 +40,8 @@ describe('Api level tests', () => {
     })
 
     //blogilistan testit, osa 3
-    test('blogs without likes = 0', async () => {
-        //ennen blogin lisääminen
+    test.skip('blogs without likes = 0', async () => {
+        //tilaa ennen blogin lisääminen
         const origins = await api
             .get('/api/blogs')
 
@@ -59,13 +59,36 @@ describe('Api level tests', () => {
                 .send(newBlog)
                 .expect(200)
         }
-        //blogin lisäämisen jälkeen
+        
+        //tilaa blogin lisäämisen jälkeen
         const res = await api
             .get('/api/blogs')
 
         expect(res.body.length).toBe(origins.body.length + 1)
         
-    })  
+    })
+
+    // blogilistan testit, osa 4
+    test('title and url fields empty', async () => {
+        const newBlog = {
+            author: 'Me Minä',
+            likes: 4
+        }
+        //alkutila
+        const origins = await api
+            .get('/api/blogs')
+          
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+        //processien jäkeinen tila
+        const res = await api
+            .get('/api/blogs')
+        
+        
+        expect(res.body.length).toBe(origins.body.length)
+    })
 
     
 })

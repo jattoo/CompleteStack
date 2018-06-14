@@ -27,12 +27,17 @@ blogRouter.post('/', async (req, res) => {
         const body = req.body
         const blog = new Blog({
             title: body.title,
-            author : body.autho,
+            author : body.author,
             likes : body.likes,
             url : body.url
         })
-        const savedBlogs = await blog.save()
-        res.json(looksAndFeel(blog))
+        //blogilistan testit, osa 4
+        if (blog.title === undefined && blog.url === undefined){
+            res.status(400).send({error : 'title and url absent'})
+        } else {
+            const savedBlogs = await blog.save()
+            res.json(looksAndFeel(blog))
+        }
     }catch(exception) {
         console.log(exception)
         res.status(500).json({error : 'Bra something fought back..'})
