@@ -43,7 +43,7 @@ blogRouter.post('/', async (req, res) => {
         res.status(500).json({error : 'Bra something fought back..'})
     }
 })
-
+//blogilistan laajennus, osa 2
 blogRouter.delete('/:id', async (req, res) => {
     try{
         await Blog.findByIdAndRemove(req.params.id)
