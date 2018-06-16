@@ -81,7 +81,7 @@ describe('Api level tests with helper fn', () => {
 
 
         // blogilistan testit, osa 4 - refaktoroitu(blogilistan laajennus, osa 1)
-        test('title and url fields empty', async () => {
+        test.skip('title and url fields empty', async () => {
             const newBlog = {
                 author: 'Me Minä',
                 likes: 4
@@ -100,6 +100,39 @@ describe('Api level tests with helper fn', () => {
         
         
             expect(res.length).toBe(blogsInTheBeginning.length)
+        })
+    })
+    
+    //blogilistan laajennus, osa 2
+    describe('Delete functionalities', async () => {
+
+        test('delete a particular blog', async () => {
+            const demo = {
+                title: 'blogilistan laajennus, osa 2',
+                author: 'Moe Kuningas',
+                likes: 4,
+                url: 'https://example.com'
+            }
+            
+            const addedBlog = await api
+                .post('/api/blogs')
+                .send(demo)
+                .expect(200)
+
+
+            const blogsInTheBeginning = await blogsInDb()
+
+            await api 
+                .delete(`/api/blogs/${addedBlog.body.id}`)
+
+            const res = await blogsInDb()
+
+            const contents = res.map(c => c.title)
+
+            //varmistetaan loppu tuloksen kahdella eri keinoilla tassa tapauksessa
+            expect(contents).not.toContain('blogilistan laajennus, osa 2')
+            expect(res.length).toBe(blogsInTheBeginning.length - 1)
+
         })
     })
     
