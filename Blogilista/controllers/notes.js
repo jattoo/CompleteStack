@@ -43,6 +43,7 @@ blogRouter.post('/', async (req, res) => {
         res.status(500).json({error : 'Bra something fought back..'})
     }
 })
+
 //blogilistan laajennus, osa 2
 blogRouter.delete('/:id', async (req, res) => {
     try{
@@ -52,6 +53,25 @@ blogRouter.delete('/:id', async (req, res) => {
         console.log(exception)
         res.status(400).send({error : 'Oh bra don\'t like your id format'})
     }
+})
+
+//blogilistan laajennus, osa 3
+blogRouter.put('/:id', async (req, res) => {
+    const body = req.body
+    const blog = {
+        likes : body.likes
+    }
+    try {
+        
+        await Blog.findByIdAndUpdate(req.params.id, blog , {new : true})
+        const resp = await blog
+        res.json(resp)
+    } catch (exception) {
+
+        console.log(exception)
+        res.status(400).send({ error: 'bad request!'})
+    }
+    
 })
 
 module.exports=blogRouter

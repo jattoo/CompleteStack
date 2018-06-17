@@ -29,8 +29,8 @@ describe('Api level tests with helper fn', () => {
     })
 
     //blogilistan testit, osa 2 - refaktoroitu(blogilistan laajennus, osa 1)
-    describe('New blog functionalities', async() => {
-        test.skip('able to add new blogs', async () => {
+    describe.skip('New blog functionalities', async() => {
+        test('able to add new blogs', async () => {
             const blogsInTheBeginning = await blogsInDb()
             
             const demo = {
@@ -52,7 +52,7 @@ describe('Api level tests with helper fn', () => {
         })
 
         //blogilistan testit, osa 3 - refaktoroitu(blogilistan laajennus, osa 1)
-        test.skip('if no likes field given, then default to \'likes = 0\'', async () => {
+        test('if no likes field given, then default to \'likes = 0\'', async () => {
         //tilaa ennen blogin lisääminen
             const blogsInTheBeginning = await blogsInDb()
 
@@ -81,7 +81,7 @@ describe('Api level tests with helper fn', () => {
 
 
         // blogilistan testit, osa 4 - refaktoroitu(blogilistan laajennus, osa 1)
-        test.skip('title and url fields empty', async () => {
+        test('title and url fields empty', async () => {
             const newBlog = {
                 author: 'Me Minä',
                 likes: 4
@@ -104,7 +104,7 @@ describe('Api level tests with helper fn', () => {
     })
     
     //blogilistan laajennus, osa 2
-    describe('Delete functionalities', async () => {
+    describe.skip('Delete functionalities', async () => {
 
         test('delete a particular blog', async () => {
             const demo = {
@@ -134,8 +134,42 @@ describe('Api level tests with helper fn', () => {
             expect(res.length).toBe(blogsInTheBeginning.length - 1)
 
         })
+
     })
-    
+
+    //blogilistan laajennus, osa 3
+    describe('Update functionality', async () => {
+        test('able to edit a blog\'s like', async () => {
+            const blogsInTheBeginning = await blogsInDb()
+
+            const demoBlog = {
+                title: 'blogilistan laajennus, osa 3',
+                author: 'Me Minä',
+                likes : 50,
+                url: 'https://example.com'
+            }
+
+            const newGuy = await api 
+                .post('/api/blogs')
+                .send(demoBlog)
+                .expect(200)
+        
+            const blogUpdater = {
+                likes : 100
+            }
+           
+            await api
+                .put(`/api/blogs/${newGuy.body.id}`)
+                .send(blogUpdater)
+
+            const res = await blogsInDb()
+            const likes = res.map(blogs => blogs.likes)
+
+
+            expect(likes).toContain(blogUpdater.likes)
+            expect(blogsInTheBeginning.length).toBe(res - 1)
+        })
+    })
 })
 
 afterAll(() => {
