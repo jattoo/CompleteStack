@@ -2,7 +2,8 @@ const {app, server } = require('../index')
 const superT = require('supertest')
 const api =superT(app)
 const Blog = require('../models/note')
-const { originBlogs, blogsInDb } = require('./test_helper')
+const { originBlogs, blogsInDb, usersInDb } = require('./test_helper')
+const User = require('../models/user')
 
 describe('Api level tests with helper fn', () => {
 
@@ -169,6 +170,92 @@ describe('Api level tests with helper fn', () => {
             expect(likes).toContain(blogUpdater.likes)
             expect(blogsInTheBeginning.length).toBe(res - 1)
         })
+    })
+
+    //blogilistan laajennus, osa 5
+    describe.only('check user addition validation functionalities', async () => {
+        //aloitettaan aina tyjästä db:sta
+        beforeAll(async () => {
+            await User.remove({})
+            const user = new User({ username: 'root', password: 'root'})
+            await user.save()
+        })
+
+        test.skip('fails if password less than 3 characters', async () => {
+            const usersInTheBeginning = await usersInDb()
+
+            const newUser = {
+                username : 'hello',
+                name: 'Hello Find',
+                password: 'hn'
+            }
+           
+            await api
+                .post('/api/blogusers')
+                .send(newUser)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+            
+           
+
+            const usersAfterOperation= await usersInDb()
+            expect(usersInTheBeginning.length).toBe(usersAfterOperation.length)
+        })
+
+        test.skip('fails if username exists', async () => {
+            const usersInTheBeginning =await usersInDb()
+
+            const newUser = {
+                username: 'root',
+                name: 'root bottom',
+                password: 'secret'
+            }
+
+            await api
+                .post('/api/blogusers')
+                .send(newUser)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+
+            const usersAfterOperation= await usersInDb()
+            expect(usersAfterOperation.length).toBe(usersInTheBeginning.length)
+        })
+        
+        test('if no age supplied then user = adult by default', async () => {
+            const usersInTheBeginning =await usersInDb()
+            
+           
+            const newUser = {
+                username: 'nice',
+                name: 'nice try',
+                password: 'secret',
+                adult : false
+            }
+            
+            
+            const addedUser = await api
+                .post('/api/blogusers')
+                .send(newUser)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+
+            const addAge = {
+                adult: true
+            }
+            if (newUser.adult === undefined){
+                await api
+                    .put(`/api/blogusers/${addedUser.body.id}`)
+                    .send(addAge)
+            }
+            
+            
+            const usersAfterOperation= await usersInDb()
+            expect(usersAfterOperation.length).toBe(usersInTheBeginning.length + 1)
+
+
+        
+        })
+
     })
 })
 

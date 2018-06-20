@@ -1,4 +1,5 @@
 const Blog = require('../models/note')
+const User = require('../models/user')
 
 const originBlogs = [
     {
@@ -25,11 +26,16 @@ const format = (blog) => {
 }
 
 
-//functio palauttaa kaikki blogit
+//funktio palauttaa kaikki blogit
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
     return blogs.map(format)
 } 
 
+//kayttajien palauttamaa funktio
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users
+}
 
-module.exports = { originBlogs, format, blogsInDb}
+module.exports = { originBlogs, format, blogsInDb, usersInDb}

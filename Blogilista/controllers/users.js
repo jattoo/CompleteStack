@@ -13,12 +13,34 @@ usersRouter.get('/', async(req, res) => {
 usersRouter.post('/', async(req, res) => {
     try{
         const body = req.body
+        
+        //blogilistan laajennus, osa 5
+        //salasanan pituuden tarkistelua varten
+        const passLen = body.password.split('')
+        //Olemassa olevan käyttäjän hakua
+        const existingUser = await User .find({ username: body.username})
 
+        if(passLen.length < 3 && existingUser.length > 0){
+            return res.status(400).send({error : 'password and username un satisfactory'})
+        
+        }else if (passLen.length < 3 ){
+            return res.status(400).send({ error : 'password too short..Tips!: Use a longer password'})
+        
+        } else if (existingUser.length > 0){
+            return res.status(400).send({error : 'Oops that username is taken...try a different one.'})
+        }
+
+        
         const saltRounds = 10
-        console.log(body.password)
         const passwordHash = await bcrypt.hash(body.password, saltRounds)
+        let adult
 
-        const adult = body.adult > 18 ? true : false
+        //blogilistan laajennus, osa 5
+        if (body.adult === undefined){
+            adult = true
+        } else {
+            adult = body.adult > 18 ? true : false
+        }
 
         const user = new User({
             username: body.username,
