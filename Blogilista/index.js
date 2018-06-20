@@ -8,7 +8,7 @@ const morgan = require('morgan')
 const blogRouter = require('./controllers/notes')
 const middleware = require('./utils/middleware')
 const config = require('./utils/config')
-
+const usersRouter = require('./controllers/users')
 
 //yhteys kannan väliin muodestettään täällä
 mongoose
@@ -24,7 +24,12 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(morgan('dev'))
 app.use(middleware.logger)
+
+
+//controllers
 app.use('/api/blogs', blogRouter)
+app.use('/api/blogusers', usersRouter)
+
 
 const server = http.createServer(app)
 
