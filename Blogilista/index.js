@@ -9,6 +9,8 @@ const blogRouter = require('./controllers/notes')
 const middleware = require('./utils/middleware')
 const config = require('./utils/config')
 const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
+
 
 //yhteys kannan väliin muodestettään täällä
 mongoose
@@ -29,7 +31,7 @@ app.use(middleware.logger)
 //controllers
 app.use('/api/blogs', blogRouter)
 app.use('/api/blogusers', usersRouter)
-
+app.use('/api/login', loginRouter)
 
 const server = http.createServer(app)
 
