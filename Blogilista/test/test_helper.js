@@ -16,20 +16,11 @@ const originBlogs = [
         'url': 'https://tcrn.ch/2HjWxpC'
     }
 ]
-const format = (blog) => {
-    return {
-        title: blog.title,
-        author: blog.author,
-        likes: blog.likes,
-        url: blog.url
-    }
-}
-
 
 //funktio palauttaa kaikki blogit
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
-    return blogs.map(format)
+    return blogs.map(Blog.format)
 } 
 
 //kayttajien palauttamaa funktio
@@ -38,4 +29,4 @@ const usersInDb = async () => {
     return users
 }
 
-module.exports = { originBlogs, format, blogsInDb, usersInDb}
+module.exports = { originBlogs, blogsInDb, usersInDb}

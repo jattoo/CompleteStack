@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 content-type: application/json
 
 {
-    "title": "App developers get their wish with expanded support for free trials",
-    "author": "Sarah Perez",
-    "url": "https://tcrn.ch/2LlULGR",
-    "likes": 2304
+    "title" : "Bouvier'n perheen pää",
+    "author" : "Maggie Simpson",
+    "likes" : 10,
+    "url" : "http://www.simpsonit.org/hahmot/clancy-bouvier/",
+    "userId" : "5b2bc99b3cb4111eb8317038"
 }

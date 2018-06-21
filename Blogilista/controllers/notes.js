@@ -1,23 +1,13 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/note')
-
-
-
-//Ulkonäon formatointi
-const looksAndFeel = (obj) => {
-    return {
-        id: obj._id,
-        title: obj.title,
-        author: obj.author,
-        likes: obj.likes,
-        url: obj.url
-    }
-}
+const User = require('../models/user')
 
 //blogilistan testit, osa 1
 blogRouter.get('/', async (req, res) => {
-    const kaikkiBlokit = await Blog.find({})
-    res.json(kaikkiBlokit.map(looksAndFeel))
+    const kaikkiBlokit = await Blog
+        .find({})
+        .populate('user', {username : 1, name: 1})
+    res.json(kaikkiBlokit.map(Blog.format))
 })
 
 
@@ -25,18 +15,21 @@ blogRouter.get('/', async (req, res) => {
 blogRouter.post('/', async (req, res) => {
     try {
         const body = req.body
+
+        const user = await User.findById(body.userId)
         const blog = new Blog({
             title: body.title,
             author : body.author,
             likes : body.likes,
-            url : body.url
+            url : body.url,
+            user : user._id
         })
         //blogilistan testit, osa 4
         if (blog.title === undefined && blog.url === undefined){
-            res.status(400).send({error : 'title and url absent'})
+            return res.status(400).send({error : 'title and url absent'})
         } else {
             const savedBlogs = await blog.save()
-            res.json(looksAndFeel(blog))
+            return res.json(Blog.format(blog))
         }
     }catch(exception) {
         console.log(exception)
@@ -73,5 +66,4 @@ blogRouter.put('/:id', async (req, res) => {
     }
     
 })
-
 module.exports=blogRouter

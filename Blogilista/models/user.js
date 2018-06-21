@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     name: String,
     password: String,
     adult: Boolean,
-    blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog'}]
+    blog: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog'}]
 })
 
 
@@ -16,7 +16,8 @@ userSchema.statics.format = (user) => {
         id: user.id,
         username: user.username,
         name: user.name,
-        adult: user.adult
+        adult: user.adult,
+        blogs: user.blog
     }
 }
 
