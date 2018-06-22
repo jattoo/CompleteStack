@@ -21,6 +21,7 @@ blogRouter.post('/', async (req, res) => {
         
         
         const decoded = jwt.verify(req.token, process.env.SECRET)
+        console.log('id: ', decoded.id)
         //jos tokenit eivät ole tai ovat vaarin
         if(!token || !decoded.id){
             return res.status(401).json({ error: 'no tokens or tokens invalid!'})
@@ -55,13 +56,17 @@ blogRouter.post('/', async (req, res) => {
 
 //blogilistan laajennus, osa 2
 blogRouter.delete('/:id', async (req, res) => {
-    try{
-        await Blog.findByIdAndRemove(req.params.id)
-        res.status(400).end()
-    }catch (exception){
-        console.log(exception)
+    const decoded = jwt.verify(req.token, process.env.SECRET)
+    const takeDon = req.params.id
+
+    console.log('take down: ', takeDon)
+    const match = await Blog.findById(req.params.id)
+    console.log(match.user._id.toString())
+    decoded.id === match.user._id.toString() ?
+        await Blog.findByIdAndRemove(takeDon) :
         res.status(400).send({error : 'Oh bra don\'t like your id format'})
-    }
+        
+    
 })
 
 //blogilistan laajennus, osa 3
