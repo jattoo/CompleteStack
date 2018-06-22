@@ -1,10 +1,11 @@
 POST http://localhost:3003/api/blogs
 content-type: application/json
+Authorization: bearer jduenshklamdjueunfndlfonauend_dnneismauaiindueujkjknajkdiueni
 
 {
-    "title" : "Bouvier'n perheen pää",
-    "author" : "Maggie Simpson",
-    "likes" : 10,
-    "url" : "http://www.simpsonit.org/hahmot/clancy-bouvier/",
-    "userId" : "5b2bc99b3cb4111eb8317038"
+    "title" : "Vaara Token-authentikaatio ei tietenkään onnistuu",
+    "author" : "World Hello",
+    "likes" : 0,
+    "url" : "https://jwt.io/introduction/",
+    "userId" : "5b2a36978c005e0fb8c9cf75"
 }

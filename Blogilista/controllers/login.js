@@ -17,7 +17,7 @@ loginRouter.post('/', async (req, res) => {
         false :
         await bcrypt.compare(body.password, user.password)
 
-    //jos varaat tiedoilla yritettään kirjautua, niin palautuu kaksi eri vastausta
+    //jos vaarilla tiedoilla yritettään kirjautua, niin palautuu kaksi eri vastausta
     if  (!(user && realPassWord)){
         return res.status(401).json({ error : 'Wrong credentials!'})
     }
