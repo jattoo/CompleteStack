@@ -12,6 +12,7 @@ class App extends React.Component {
       username: '',
       password: ''
     }
+    this.logout = this.logout.bind(this)
   }
 
   componentDidMount() {
@@ -19,8 +20,19 @@ class App extends React.Component {
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
     )
+
+    //blogilistan frontend, osa 2
+    const userOnlinejSON = window.localStorage.getItem('currentUser')
+    if (userOnlinejSON ){
+      const user = JSON.parse(userOnlinejSON )
+
+      this.setState({user})
+      blogService.setToken(user.token)
+    }
+
   } 
 
+  //sisään kirjautuminen tapahtumankäsittelija
   login = async (e) => {
     e.preventDefault()
 
@@ -28,14 +40,26 @@ class App extends React.Component {
       username: this.state.username,
       password: this.state.password
     })
+
+    //blogilistan frontend, osa 2
+    window.localStorage.setItem('currentUser', JSON.stringify(user))
+    blogService.setToken(user.token)
+
     this.setState({
       username: '',
       password: '',
       user
     })
+  
     console.log('user after login: ', this.state.user)
   }
 
+  //Ulos kirjautuminen tapahtumankäsittelijä
+  logout = (e) => {
+    e.preventDefault()
+    window.localStorage.clear()
+    window.location.reload(true)
+  }
   handleChanges = (e) => {
     this.setState({
       [e.target.name] : e.target.value
@@ -76,7 +100,8 @@ class App extends React.Component {
     const blogForm = () => (
       <div>
         <h2>blogs</h2>
-        <p>{this.state.user.name} logged in</p>
+        <p>{this.state.user.name} logged in <button onClick={this.logout}>logout</button></p>
+        
         {this.state.blogs.map(blog => 
           <Blog key={blog.id} blog={blog}/>
         )}
@@ -95,4 +120,3 @@ class App extends React.Component {
 }
 
 export default App;
-
