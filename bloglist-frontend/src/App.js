@@ -10,7 +10,10 @@ class App extends React.Component {
       blogs: [],
       user: null,
       username: '',
-      password: ''
+      password: '',
+      title: '',
+      author: '',
+      url: ''
     }
     this.logout = this.logout.bind(this)
   }
@@ -32,6 +35,32 @@ class App extends React.Component {
 
   } 
 
+  addABlog = (e) =>{
+    e.preventDefault()
+    console.log('Adding new blog')
+    const newBlog = {
+      title: this.state.title,
+      author: this.state.author,
+      url: this.state.url,
+    }
+
+    blogService
+      .create(newBlog)
+      .then(blog => {
+        this.setState({
+          blogs : this.state.blogs.concat(blog),
+          title:'',
+          author:'',
+          url: ''
+        })
+      })
+    console.log(newBlog)
+  }
+  
+  //Yhteinen käsittelija fn joka asettaa arvot kentille silloin kun lisataa uuden blogin
+  handleNoteBlogChanges = (e) => {
+    this.setState({ [e.target.name] : e.target.value})
+  }
   //sisään kirjautuminen tapahtumankäsittelija
   login = async (e) => {
     e.preventDefault()
@@ -60,11 +89,18 @@ class App extends React.Component {
     window.localStorage.clear()
     window.location.reload(true)
   }
+
+
+
   handleChanges = (e) => {
     this.setState({
       [e.target.name] : e.target.value
     })
   }
+
+
+
+
   render() {
     const loginForm = () => (
       <div>
@@ -93,7 +129,7 @@ class App extends React.Component {
             <button>Login</button>
         </div>
         </form>
-
+      
       </div>
     )
 
@@ -101,22 +137,64 @@ class App extends React.Component {
       <div>
         <h2>blogs</h2>
         <p>{this.state.user.name} logged in <button onClick={this.logout}>logout</button></p>
-        
-        {this.state.blogs.map(blog => 
-          <Blog key={blog.id} blog={blog}/>
-        )}
       </div>
     )
 
-
+    const makeAblogForm = () => (
+      <div>
+        <h2>create new</h2>
+        <form onSubmit={this.addABlog}>
+        <div>
+          title: 
+            <input 
+              type="text"
+              name="title"
+              value={this.state.title}
+              onChange={this.handleNoteBlogChanges}
+            />
+        </div>
+        <div>
+        author: 
+          <input 
+            type="text"
+            name="author"
+            value={this.state.author}
+            onChange={this.handleNoteBlogChanges}
+          />
+      </div>
+      <div>
+        url: 
+        <input 
+          type="text"
+          name="url"
+          value={this.state.url}
+          onChange={this.handleNoteBlogChanges}
+        />
+      </div>
+      <button>create</button>
+      </form>
+    </div>
+    )
+   
     return (
       <div>
         {this.state.user === null ? 
-          loginForm() :
-          blogForm()}
+         loginForm() :
+         <div>
+          {blogForm()}
+          {this.state.blogs.map(blog => blog._id ? 
+          <Blog key={blog._id} blog={blog}/> :
+          <Blog key={blog.id} blog={blog}/>
+        )}
+          {makeAblogForm()}
+          </div>
+        }
       </div>
+      
+          
     )
   }
 }
+
 
 export default App;
