@@ -2,6 +2,7 @@ import React from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from  './components/Notification'
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +14,8 @@ class App extends React.Component {
       password: '',
       title: '',
       author: '',
-      url: ''
+      url: '',
+      notifs: ''
     }
     this.logout = this.logout.bind(this)
   }
@@ -32,7 +34,7 @@ class App extends React.Component {
       this.setState({user})
       blogService.setToken(user.token)
     }
-
+   
   } 
 
   addABlog = (e) =>{
@@ -49,12 +51,19 @@ class App extends React.Component {
       .then(blog => {
         this.setState({
           blogs : this.state.blogs.concat(blog),
+          notifs : `a new blog '${this.state.title}' by ${this.state.author} added`,
           title:'',
           author:'',
           url: ''
         })
       })
-    console.log(newBlog)
+      setTimeout(() => {
+        this.setState({
+          notifs : null
+        })
+      }, 5000);
+      
+    
   }
   
   //Yhteinen käsittelija fn joka asettaa arvot kentille silloin kun lisataa uuden blogin
@@ -63,6 +72,7 @@ class App extends React.Component {
   }
   //sisään kirjautuminen tapahtumankäsittelija
   login = async (e) => {
+    try{
     e.preventDefault()
 
     const user = await loginService.login({
@@ -79,7 +89,16 @@ class App extends React.Component {
       password: '',
       user
     })
-  
+  } catch(exception){
+    this.setState({
+      notifs : 'wrong username or password'
+    })
+    setTimeout(() => {
+      this.setState({
+        notifs: null
+      })
+    }, 3000);
+  }
     console.log('user after login: ', this.state.user)
   }
 
@@ -87,7 +106,17 @@ class App extends React.Component {
   logout = (e) => {
     e.preventDefault()
     window.localStorage.clear()
-    window.location.reload(true)
+    
+    this.setState({
+      notifs: 'Successfully logging you out'
+    })
+    setTimeout(() => {
+      this.setState({
+        notifs : null
+      })
+      window.location.reload(true)
+    }, 3000);
+    
   }
 
 
@@ -178,6 +207,8 @@ class App extends React.Component {
    
     return (
       <div>
+       
+        <Notification msg={this.state.notifs} />
         {this.state.user === null ? 
          loginForm() :
          <div>
