@@ -3,6 +3,9 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from  './components/Notification'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
+
 
 class App extends React.Component {
   constructor(props) {
@@ -119,6 +122,7 @@ class App extends React.Component {
     
   }
 
+  
 
 
   handleChanges = (e) => {
@@ -127,10 +131,8 @@ class App extends React.Component {
     })
   }
 
-
-
-
   render() {
+   
     const loginForm = () => (
       <div>
         <h1>Log into application</h1>
@@ -164,59 +166,43 @@ class App extends React.Component {
 
     const blogForm = () => (
       <div>
-        <h2>blogs</h2>
+        <h2>Blogs</h2>
         <p>{this.state.user.name} logged in <button onClick={this.logout}>logout</button></p>
       </div>
     )
 
+    //Otettaan togglable komponentin käyttöön täällä.
     const makeAblogForm = () => (
-      <div>
-        <h2>create new</h2>
-        <form onSubmit={this.addABlog}>
-        <div>
-          title: 
-            <input 
-              type="text"
-              name="title"
-              value={this.state.title}
-              onChange={this.handleNoteBlogChanges}
-            />
-        </div>
-        <div>
-        author: 
-          <input 
-            type="text"
-            name="author"
-            value={this.state.author}
-            onChange={this.handleNoteBlogChanges}
-          />
-      </div>
-      <div>
-        url: 
-        <input 
-          type="text"
-          name="url"
-          value={this.state.url}
-          onChange={this.handleNoteBlogChanges}
+      <Togglable buttonLabel="Add New Blog" >
+        <BlogForm 
+          visible={this.visible}
+          onSubmit={this.addABlog}
+          title={this.state.title}
+          handleChange={this.handleNoteBlogChanges}
+          author={this.state.author}
+          url={this.state.url}
         />
-      </div>
-      <button>create</button>
-      </form>
-    </div>
+      </Togglable>
     )
-   
+
     return (
       <div>
        
         <Notification msg={this.state.notifs} />
         {this.state.user === null ? 
          loginForm() :
-         <div>
+         <div >
           {blogForm()}
-          {this.state.blogs.map(blog => blog._id ? 
-          <Blog key={blog._id} blog={blog}/> :
-          <Blog key={blog.id} blog={blog}/>
+          {this.state.blogs.map(blog =>
+          <Blog key={blog._id || blog.id} 
+          title={blog.title}
+          author={blog.author}
+          likes={blog.likes}
+          url={blog.url}
+          username={blog.user.name}
+          /> 
         )}
+         
           {makeAblogForm()}
           </div>
         }
