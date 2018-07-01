@@ -20,7 +20,13 @@ class App extends React.Component {
       url: '',
       notifs: ''
     }
+    this.addABlog = this.addABlog.bind(this)
     this.logout = this.logout.bind(this)
+    this.handleChanges = this.handleChanges.bind(this)
+    this.handleNoteBlogChanges = this.handleNoteBlogChanges.bind(this)
+    this.addLikes = this.addLikes.bind(this)
+    this.cancelLikes = this.cancelLikes.bind(this)
+
   }
 
   componentDidMount() {
@@ -69,7 +75,7 @@ class App extends React.Component {
     
   }
   
-  //Yhteinen käsittelija fn joka asettaa arvot kentille silloin kun lisataa uuden blogin
+  //Yhteinen käsittelija fn joka asettaa arvot kentille silloin kun lisataan uuden blogin
   handleNoteBlogChanges = (e) => {
     this.setState({ [e.target.name] : e.target.value})
   }
@@ -122,9 +128,46 @@ class App extends React.Component {
     
   }
 
-  
+
+  //Ei ollut tehtävä annossa. Huvin vuoksi lisääsin sen tykkäyksen peruttamisen varten
+  cancelLikes = (id) => {
+    return () => {
+    const twistedBlog = this.state.blogs.find(blog => blog.id === id)
+    twistedBlog.likes = twistedBlog.likes - 1
+    
+    blogService
+      .handleLikes(id, twistedBlog)
+      .then(() => {
+        this.setState({
+          blogs: this.state.blogs.map(blog => blog.id !== id ? blog : twistedBlog)
+        })
+      })
+
+    }
+  }
 
 
+
+  addLikes = (id) => {
+    return () => {
+      //Haetaan kannasta etsimmamme blogin ja tallennetaan siitä muuttujaan
+      //Muutujan otettaan käyttöön blogservice funktiossa
+      let twistedBlog = this.state.blogs.find(blog => blog.id === id) 
+      //sen tykkayksen arvon nostetaan nappin painalusta.     
+      twistedBlog.likes =  twistedBlog.likes + 1
+
+      blogService
+        .handleLikes(id, twistedBlog)
+        .then(() => {
+          this.setState({
+            //käydään lappi koko blogit ja jos ei ole sama kuin meidän blogin niin
+            //voidaan palauttaa sen kuin se on muuten palautetaan muokattu versiomme
+            blogs: this.state.blogs.map(blog => blog.id !== id ? blog : twistedBlog)
+          })
+        })
+    }
+  }
+ 
   handleChanges = (e) => {
     this.setState({
       [e.target.name] : e.target.value
@@ -186,21 +229,26 @@ class App extends React.Component {
     )
 
     return (
+      
       <div>
-       
+       {}
         <Notification msg={this.state.notifs} />
         {this.state.user === null ? 
          loginForm() :
          <div >
           {blogForm()}
           {this.state.blogs.map(blog =>
-          <Blog key={blog._id || blog.id} 
-          title={blog.title}
-          author={blog.author}
-          likes={blog.likes}
-          url={blog.url}
-          username={blog.user.name}
+          <Blog key={blog.id || blog._id} 
+            title={blog.title}
+            author={blog.author}
+            likes={blog.likes}
+            url={blog.url}
+            username={blog.user.name}
+            id = {blog.id}
+            addLikes={this.addLikes}
+            cancelLikes={this.cancelLikes}
           /> 
+          
         )}
          
           {makeAblogForm()}
