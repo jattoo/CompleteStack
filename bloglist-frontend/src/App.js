@@ -31,8 +31,30 @@ class App extends React.Component {
 
   componentDidMount() {
     console.log('user in the begining: ', this.state.user)
-    blogService.getAll().then(blogs =>
-      this.setState({ blogs })
+    //
+    blogService.getAll().then(blogs =>{
+      //blogilistan frontend, osa 8
+      // määrritellaan taulukkon tulevan prosessien käyttöön.
+      let deepCopy = []
+      let highestLikes = 1
+      let lowest = 300
+      //etsittaan blogista enemmän tykkätty blogin ja vähintään tykätty
+      blogs.map(b => b.likes > highestLikes ?  highestLikes = b.likes : highestLikes = highestLikes)
+      blogs.map(b => b.likes < lowest ?  lowest = b.likes : lowest = lowest)
+      
+      //while loopin varten tehdään sen manuaalisesti aloitus ja lopetus paikkat
+      let startingPoint = highestLikes + 1
+      const stoppingPoint = lowest - 1
+
+      //whilen avulla kerrättään blogit ja sijoitettaan aikaisemmin luotu taulukkoon
+      while (startingPoint > stoppingPoint){
+        blogs.map(m => m.likes === startingPoint ? deepCopy.push(m) : '') 
+        startingPoint = startingPoint - 1
+      }
+      console.log(deepCopy)
+      this.setState({ 
+        blogs : this.state.blogs.concat(deepCopy)
+       })}
     )
 
     //blogilistan frontend, osa 2
@@ -128,6 +150,7 @@ class App extends React.Component {
     
   }
 
+ 
 
   //Ei ollut tehtävä annossa. Huvin vuoksi lisääsin sen tykkäyksen peruttamisen varten
   cancelLikes = (id) => {
@@ -175,7 +198,7 @@ class App extends React.Component {
   }
 
   render() {
-   
+    
     const loginForm = () => (
       <div>
         <h1>Log into application</h1>
@@ -237,7 +260,7 @@ class App extends React.Component {
          loginForm() :
          <div >
           {blogForm()}
-          {this.state.blogs.map(blog =>
+          {this.state.blogs.map(blog => 
           <Blog key={blog.id || blog._id} 
             title={blog.title}
             author={blog.author}
