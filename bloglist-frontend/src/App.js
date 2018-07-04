@@ -18,7 +18,9 @@ class App extends React.Component {
       title: '',
       author: '',
       url: '',
-      notifs: ''
+      notifs: '',
+      store: []
+      
     }
     this.addABlog = this.addABlog.bind(this)
     this.logout = this.logout.bind(this)
@@ -48,10 +50,9 @@ class App extends React.Component {
 
       //whilen avulla kerrättään blogit ja sijoitettaan aikaisemmin luotu taulukkoon
       while (startingPoint > stoppingPoint){
-        blogs.map(m => m.likes === startingPoint ? deepCopy.push(m) : '') 
+        blogs.map(m => m.likes === startingPoint ? deepCopy.push(m) : '')
         startingPoint = startingPoint - 1
       }
-      console.log(deepCopy)
       this.setState({ 
         blogs : this.state.blogs.concat(deepCopy)
        })}
@@ -150,7 +151,55 @@ class App extends React.Component {
     
   }
 
- 
+  //poistotoimintoa jos lisääjä on anonymous käyttäjä. 
+  //Refaktoroin backendin että antaa kuka tahansa poista lisäämällä if clausit seuraavalla tavall
+  /*
+    if(blog.user === undefined){
+          await blog.remove()
+      } else {
+        //tai sitten käyttäjä on määritelty tee tässä sulussa olevat koodit
+      }
+  */
+  poistoToiminto = (id) => {
+    return () => {
+      const poistettava = this.state.blogs.find(fp => fp.id === id)
+      console.log('Username: ',poistettava.user.name)
+      
+      if (poistettava.user.name === undefined) {
+      
+        
+        if(window.confirm(`delete ${poistettava.title} by ${'anonymous'} ?`) === true){
+          const loput = this.state.blogs.filter(fm => fm.title !== poistettava.title)
+          //varmuuden vuoden vuoksi kopioidaan muut blogit ja tallentaa niitä 
+          //varastossa
+          this.setState({
+            store: this.state.store.push(loput)
+          })
+
+          blogService
+            .deLete(id, poistettava)
+            .then(res => {
+              this.setState({
+                blogs: loput,
+                notifs: `Poistettiin ${poistettava.title}`
+              })
+            })
+            .catch(error =>{
+              this.setState({
+                error: `${poistettava.title} is no longer here`
+              })
+            })
+            setTimeout(() => {
+              this.setState({
+                error: null
+              })
+            }, 5000);
+        }
+      }
+      console.log('the store name:', this.state.store)
+    }
+    
+  }
 
   //Ei ollut tehtävä annossa. Huvin vuoksi lisääsin sen tykkäyksen peruttamisen varten
   cancelLikes = (id) => {
@@ -261,15 +310,32 @@ class App extends React.Component {
          <div >
           {blogForm()}
           {this.state.blogs.map(blog => 
+          //Tähän olen päätynyt koska olen poistanut aikaisemat blogit ennen käyttäjän 
+          //lisääminen. Tämän jälkeen sovellus ei käynistynyt kun manuaalisesti lisääsin
+          //mongon kautta uudet blogit. Päädyin tähän ratkaisun
+          blog.user.name===undefined ?  
           <Blog key={blog.id || blog._id} 
             title={blog.title}
             author={blog.author}
             likes={blog.likes}
             url={blog.url}
-            username={blog.user.name}
+            username= {'anonymous'}
             id = {blog.id}
             addLikes={this.addLikes}
             cancelLikes={this.cancelLikes}
+            poisto={this.poistoToiminto}
+          /> 
+          :
+          <Blog key={blog.id || blog._id} 
+            title={blog.title}
+            author={blog.author}
+            likes={blog.likes}
+            url={blog.url}
+            username= {blog.user.name}
+            id = {blog.id}
+            addLikes={this.addLikes}
+            cancelLikes={this.cancelLikes}
+            poisto={this.poistoToiminto}
           /> 
           
         )}

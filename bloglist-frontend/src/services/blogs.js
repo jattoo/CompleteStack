@@ -26,4 +26,8 @@ const handleLikes = async (id, blog) => {
   return res.data
 }
 
-export default { getAll, setToken, create, handleLikes}
+const deLete = async (id, blog) => {
+  const res = await axios.delete(`${baseUrl}/${id}`, blog)
+  return res.data
+}
+export default { getAll, setToken, create, handleLikes, deLete}
