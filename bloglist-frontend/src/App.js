@@ -247,7 +247,6 @@ class App extends React.Component {
   }
 
   render() {
-    
     const loginForm = () => (
       <div>
         <h1>Log into application</h1>
@@ -313,7 +312,8 @@ class App extends React.Component {
           //Tähän olen päätynyt koska olen poistanut aikaisemat blogit ennen käyttäjän 
           //lisääminen. Tämän jälkeen sovellus ei käynistynyt kun manuaalisesti lisääsin
           //mongon kautta uudet blogit. Päädyin tähän ratkaisun
-          blog.user.name===undefined ?  
+          
+          blog.user.name === undefined || blog.user.name === this.state.user.name ?  
           <Blog key={blog.id || blog._id} 
             title={blog.title}
             author={blog.author}
