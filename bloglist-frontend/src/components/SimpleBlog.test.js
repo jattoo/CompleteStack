@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import SimpleBlog from  './SimpleBlog'
 
 describe('<SimpleBlog /> komponentin testaus', () => {
-    it('renders blog title', () => {
+    it.skip('renders blog title', () => {
         const blog={
             title: 'Its never late to learn making porridge',
             author: 'Sir Moe Kuningas',
@@ -18,7 +18,7 @@ describe('<SimpleBlog /> komponentin testaus', () => {
         expect(titleDiv.text()).toContain(blog.author)
     })
 
-    it('renders blog likes', () => {
+    it.skip('renders blog likes', () => {
         const blog={
             title: 'Its never late to learn making porridge',
             author: 'Sir Moe Kuningas',
@@ -29,4 +29,22 @@ describe('<SimpleBlog /> komponentin testaus', () => {
 
         expect(likesDiv.text()).toContain(blog.likes)
     })
+
+    it('multiple button click creates a double event', () => {
+        const blog={
+            title: 'Its never late to learn making porridge',
+            author: 'Sir Moe Kuningas',
+            likes: 100
+        }
+        const mockHandler = jest.fn()
+
+        const component = shallow(<SimpleBlog blog={blog} onClick={mockHandler}/>)
+
+        const button = component.find('button')
+        button.simulate('click')
+        button.simulate('click')
+
+       expect(mockHandler.mock.calls.length).toBe(2)
+    })
+  
 })
