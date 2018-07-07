@@ -27,16 +27,16 @@ class Blog extends React.Component{
         
        if(this.props.currentUser === this.props.username || this.props.username === 'anonymous') {
            return(
-            <div >
+            <div>
                 <div style={hideWhenVisible} className='blogStyle'>
-                    <a onClick={this.toggleVisibility}>{this.props.title} {this.props.author}</a>
+                    <a onClick={this.toggleVisibility} className="hideContent">{this.props.title} {this.props.author}</a>
                 </div>
                 <div style={showWhenVisible} className='SingleStyle'>
-                    <h3 onClick={this.toggleVisibility}>{this.props.title} {this.props.author}</h3>
+                    <h3 onClick={this.toggleVisibility} className="showContent">{this.props.title} {this.props.author}</h3>
                     <h4>{this.props.url}</h4>
                     <h4>{this.props.likes} {}
-                    <button onClick={this.props.addLikes(this.props.id)}>Add</button>
-                    <button onClick={this.props.cancelLikes(this.props.id)}>Cancel</button><br/></h4>
+                    <button onClick={this.props.addLikes(this.props.id)} className="likeButton">Add</button>
+                    <button onClick={this.props.cancelLikes(this.props.id)} className="cancelButton">Cancel</button><br/></h4>
                     <h4>{'added by '} { this.props.username}</h4>
                     <button className='poisto' onClick={this.props.poisto(this.props.id)}>Delete</button>
                 </div>
@@ -44,16 +44,16 @@ class Blog extends React.Component{
         )
     } else {
         return(
-            <div >
+            <div>
                 <div style={hideWhenVisible} className='blogStyle'>
-                    <a onClick={this.toggleVisibility}>{this.props.title} {this.props.author}</a>
+                    <a onClick={this.toggleVisibility} className="hideContent">{this.props.title} {this.props.author}</a>
                 </div>
                 <div style={showWhenVisible} className='SingleStyle'>
-                    <h3 onClick={this.toggleVisibility}>{this.props.title} {this.props.author}</h3>
+                    <h3 onClick={this.toggleVisibility} className="showContent">{this.props.title} {this.props.author}</h3>
                     <h4>{this.props.url}</h4>
                     <h4>{this.props.likes} {}
-                    <button onClick={this.props.addLikes(this.props.id)}>Add</button>
-                    <button onClick={this.props.cancelLikes(this.props.id)}>Cancel</button><br/></h4>
+                    <button onClick={this.props.addLikes(this.props.id)} className="likeButton">Add</button>
+                    <button onClick={this.props.cancelLikes(this.props.id)}  className="cancelButton">Cancel</button><br/></h4>
                     <h4>{'added by '} { this.props.username}</h4>
                 </div>
             </div>
