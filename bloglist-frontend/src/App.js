@@ -60,6 +60,7 @@ class App extends React.Component {
 
     //blogilistan frontend, osa 2
     const userOnlinejSON = window.localStorage.getItem('currentUser')
+    console.log('user: ', userOnlinejSON)
     if (userOnlinejSON ){
       const user = JSON.parse(userOnlinejSON )
 
@@ -251,7 +252,7 @@ class App extends React.Component {
       <div>
         <h1>Log into application</h1>
 
-        <form onSubmit={this.login}>
+        <form onSubmit={this.login} className="login">
           <div>
             <div>
             Username: 
@@ -305,7 +306,7 @@ class App extends React.Component {
        {}
         <Notification msg={this.state.notifs} />
         {this.state.user === null ? 
-         loginForm() :
+         loginForm():
          <div >
           {blogForm()}
           {this.state.blogs.map(blog => 
