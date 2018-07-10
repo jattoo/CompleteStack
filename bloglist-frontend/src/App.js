@@ -5,6 +5,7 @@ import loginService from './services/login'
 import Notification from  './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
 
 
 class App extends React.Component {
@@ -249,34 +250,13 @@ class App extends React.Component {
 
   render() {
     const loginForm = () => (
-      <div>
-        <h1>Log into application</h1>
-
-        <form onSubmit={this.login} className="login">
-          <div>
-            <div>
-            Username: 
-              <input 
-                type="text"
-                name="username"
-                value={this.state.username}
-                onChange={this.handleChanges}
-              />
-            </div>
-            <div>
-              Password: 
-              <input 
-                type="password"
-                name="password"
-                value={this.state.password}
-                onChange={this.handleChanges}
-              />
-            </div>
-            <button>Login</button>
-        </div>
-        </form>
-      
-      </div>
+        <LoginForm
+          visible={this.state.visible}
+          username={this.state.username}
+          password={this.state.password}
+          handleChange={this.handleNoteBlogChanges}
+          handleSubmit={this.login}
+        />
     )
 
     const blogForm = () => (
@@ -305,9 +285,14 @@ class App extends React.Component {
       <div>
        {}
         <Notification msg={this.state.notifs} />
-        {this.state.user === null ? 
-         loginForm():
-         <div >
+        
+        {this.state.user === null ?
+        <div className ="login">
+          <h1>Log into application</h1>
+         {loginForm()}
+         </div>
+         :
+         <div className="blogtosee">
           {blogForm()}
           {this.state.blogs.map(blog => 
           //Tähän olen päätynyt koska olen poistanut aikaisemat blogit ennen käyttäjän 
