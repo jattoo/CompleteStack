@@ -1,0 +1,1 @@
+Täällä on valmis versio unicafe-redux projektista joka vastaa "Unicafe revisited, osa 1" tehtävä antoa. Huom, koko projekti on siirretty aloitus sivulta tänne luku 5:n tehtävien palautus kansioon.Elikka tällä on vaan tehtävä 5.17 vaikka komit viestiessä lukee muuta.
