@@ -36,11 +36,15 @@ class App extends React.Component {
     
     
     const anecdotes = this.props.store.getState()
-    
+    //tehtävä 5.20 anekdootit, osa 2
+    const sortedNote = anecdotes.sort(function(a , b ) {
+      return b.votes - a.votes
+    })
+    console.log('sorted: ',sortedNote)
     return (
       <div>
         <h2>Anecdotes</h2>
-        {anecdotes.map(anecdote=>
+        {sortedNote.map(anecdote=>
           <div key={anecdote.id}>
             <div>
               {anecdote.content} 
