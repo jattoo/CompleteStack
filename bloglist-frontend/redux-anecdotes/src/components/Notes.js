@@ -1,19 +1,32 @@
 import React from 'react'
 import actionFor from '../actionCreators'
+import PropTypes from 'prop-types'
+
 
 class Notes extends React.Component{
+    componentDidMount() {
+        const { store } = this.context
+        this.unsubscribe = store.subscribe(() =>
+          this.forceUpdate()
+        )
+      }
+    
+      componentWillUnmount() {
+        this.unsubscribe()
+      }
+    
     voting = (id) => () => {
-        this.props.store.dispatch(
+        this.context.store.dispatch(
           actionFor.givingVotes(id)
         )
       }
       cancelVote = (id) => () => {
-        this.props.store.dispatch(
+        this.context.store.dispatch(
           actionFor.cancellingVotes(id)
         )
       }
     render(){
-        const anecdotes = this.props.store.getState()
+        const anecdotes = this.context.store.getState()
         //tehtävä 5.20 anekdootit, osa 2
         const sortedNote = anecdotes.sort(function(a , b ) {
         return b.votes - a.votes
@@ -37,5 +50,10 @@ class Notes extends React.Component{
         )
     }
 }
+
+Notes.contextTypes = {
+    store: PropTypes.object
+}
+
 
 export default Notes
