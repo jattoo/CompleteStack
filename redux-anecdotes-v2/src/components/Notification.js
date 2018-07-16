@@ -1,18 +1,20 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+import store from './../store'
 
 class Notification extends React.Component {
+
     render() {
-        const style = {
-            border: 'solid',
-            padding: 10,
-            borderWidth: 1
-        }
         return (
-            <div style={style}>
-        render here notification...
+            <div className="style">
+                {store.getState().notif}
             </div>
         )
     }
+}
+
+Notification.contextTypes = {
+    store: PropTypes.object
 }
 
 export default Notification

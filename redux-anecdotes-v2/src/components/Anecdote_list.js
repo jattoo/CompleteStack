@@ -1,9 +1,24 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+
 
 
 class AnecdoteList extends React.Component {
-    render() {
-        const anecdotes = this.props.store.getState()
+    componentDidMount(){
+        const { store } = this.context
+        console.log('store: ', store.getState())
+        this.unsubscribe = store.subscribe(() => 
+            this.forceUpdate()    
+        )
+    }
+
+    componentWillUnmount(){
+        this.unsubscribe()
+    }
+    
+    render() {//.getState()
+        const anecdotes = this.context.store.getState().anecdotes
+        console.log(anecdotes)
         return (
             <div>
                 <h2>Anecdotes</h2>
@@ -15,7 +30,7 @@ class AnecdoteList extends React.Component {
                         <div>
                             has <a className="voteNumbers"><b>{anecdote.votes}</b></a>{' '}
                             <button onClick={() => 
-                                this.props.store.dispatch({ type: 'VOTE', id: anecdote.id })
+                                this.context.store.dispatch({ type: 'VOTE', id: anecdote.id })
                             }>vote</button>
                         </div>
                     </div>
@@ -25,4 +40,7 @@ class AnecdoteList extends React.Component {
     }
 }
 
+AnecdoteList.contextTypes= {
+    store: PropTypes.object
+}
 export default AnecdoteList
