@@ -4,7 +4,6 @@ import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/Anecdote_list'
 class App extends React.Component {
     render() {
-    //const anecdotes = this.props.store.getState()
         return (
             <div>
                 <h1>Programming anecdotes</h1>
