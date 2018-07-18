@@ -1,5 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { notifNews , notifReset  } from './../reducers/notifReducer'
+import { voting } from './../reducers/anecdoteReducer'
+
 
 
 
@@ -16,9 +19,10 @@ class AnecdoteList extends React.Component {
         this.unsubscribe()
     }
     
+    
+
     render() {//.getState()
         const anecdotes = this.context.store.getState().anecdotes
-        console.log(anecdotes)
         return (
             <div>
                 <h2>Anecdotes</h2>
@@ -30,8 +34,14 @@ class AnecdoteList extends React.Component {
                         <div>
                             has <a className="voteNumbers"><b>{anecdote.votes}</b></a>{' '}
                             <button onClick={() => 
-                                this.context.store.dispatch({ type: 'VOTE', id: anecdote.id })
-                            }>vote</button>
+                            {
+                                this.context.store.dispatch(voting(anecdote.id)),
+                                this.context.store.dispatch(notifNews(anecdote.content)),
+                                setTimeout(() => {
+                                    this.context.store.dispatch(notifReset())
+                                }, 5000)}
+                            }
+                            >vote</button>
                         </div>
                     </div>
                 )}
@@ -39,6 +49,8 @@ class AnecdoteList extends React.Component {
         )
     }
 }
+
+
 
 AnecdoteList.contextTypes= {
     store: PropTypes.object

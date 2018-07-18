@@ -24,10 +24,10 @@ const reducer = (store = initialState, action) => {
     case 'VOTE':
         const old = store.filter(a => a.id !== action.id)
         const voted = store.find(a => a.id === action.id)
-    
+        //console.log(action.id.id)
         return [...old, { ...voted, votes: voted.votes + 1 } ]
     case 'CREATE':
-        console.log('The actions: ', action.data)
+        //console.log('The actions: ', action.data)
         return [...store, action.data]
     default:
         return store
@@ -45,4 +45,12 @@ export const createBlog = (content) => {
         }
     }
 }
+
+export const voting = (id) => {
+    return {
+        type: 'VOTE',
+        id
+    }
+} 
+
 export default reducer
