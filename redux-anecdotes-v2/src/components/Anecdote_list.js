@@ -1,31 +1,18 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { notifNews , notifReset  } from './../reducers/notifReducer'
 import { voting } from './../reducers/anecdoteReducer'
 import Filter from './Filter'
+import store from './../store'
 
 
 
 class AnecdoteList extends React.Component {
-    componentDidMount(){
-        const { store } = this.context
-        
-        console.log('store: ', store.getState())
-        this.unsubscribe = store.subscribe(() => 
-            this.forceUpdate()    
-        )
-    }
-
-    componentWillUnmount(){
-        this.unsubscribe()
-    }
-    
-    
+   
 
     render() {
-        const anecdotes = this.context.store.getState().anecdotes
-        const { filter } = this.context.store.getState()
-        const showMe = anecdotes.find(note => note.content.toLowerCase().substr(0, 10) === filter) //refaktoroitu toimimaan lowercase ääkösten kanssa
+        const { filter, anecdotes } = store.getState()
+        const showMe = anecdotes.find(note => note.content.toLowerCase().substr(0, 10) === filter)
         if (showMe){
             return (
                 <div>
@@ -41,10 +28,10 @@ class AnecdoteList extends React.Component {
                             <div>
                             has <a className="voteNumbers"><b>{showMe.votes}</b></a>{' '}
                                 <button onClick={() => 
-                                { this.context.store.dispatch(voting(showMe.id)),
-                                this.context.store.dispatch(notifNews(showMe.content)),
+                                {this.props.votersCard(showMe.id),
+                                this.props.sendNotifications(showMe.content),
                                 setTimeout(() => {
-                                    this.context.store.dispatch(notifReset())
+                                    this.props.clearAll()
                                 }, 5000)}
                                 }
                                 >vote</button>
@@ -70,10 +57,10 @@ class AnecdoteList extends React.Component {
                             <div>
                             has <a className="voteNumbers"><b>{anecdote.votes}</b></a>{' '}
                                 <button onClick={() => 
-                                {this.context.store.dispatch(voting(anecdote.id)),
-                                this.context.store.dispatch(notifNews(anecdote.content)),
+                                {store.dispatch(voting(anecdote.id)),
+                                store.dispatch(notifNews(anecdote.content)),
                                 setTimeout(() => {
-                                    this.context.store.dispatch(notifReset())
+                                    store.dispatch(notifReset())
                                 }, 5000)}
                                 }
                                 >vote</button>
@@ -88,8 +75,30 @@ class AnecdoteList extends React.Component {
 }
 
 
-
-AnecdoteList.contextTypes= {
-    store: PropTypes.object
+const mapStateToProps = (store) => {
+    return {
+        anecdote: store.anecdote,
+        notif: store.notif,
+        filter: store.filter
+    }
 }
-export default AnecdoteList
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        votersCard: (value) => {
+            dispatch(voting(value))
+        },
+        sendNotifications: (value) => {
+            dispatch(notifNews(value))
+        },
+        clearAll: (value) => {
+            dispatch(notifReset(value))
+        }
+    }
+}
+const ConnectedAnecdoteList = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AnecdoteList)
+
+export default ConnectedAnecdoteList
