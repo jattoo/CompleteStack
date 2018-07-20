@@ -25,8 +25,7 @@ class AnecdoteList extends React.Component {
     render() {
         const anecdotes = this.context.store.getState().anecdotes
         const { filter } = this.context.store.getState()
-        const showMe = anecdotes.find(note => note.content.substr(0, 10) === filter)
-        console.log('showme: ', showMe)        
+        const showMe = anecdotes.find(note => note.content.toLowerCase().substr(0, 10) === filter) //refaktoroitu toimimaan lowercase ääkösten kanssa
         if (showMe){
             return (
                 <div>

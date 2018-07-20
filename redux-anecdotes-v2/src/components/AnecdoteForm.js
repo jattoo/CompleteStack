@@ -1,7 +1,6 @@
 import React from 'react'
 import { createBlog } from './../reducers/anecdoteReducer'
-import PropTypes from 'prop-types'
-import store from './../store'
+import { connect } from 'react-redux'
 import { newBlogNotif, notifReset } from './../reducers/notifReducer'
 
 class AnecdoteForm extends React.Component {
@@ -10,17 +9,15 @@ class AnecdoteForm extends React.Component {
       e.preventDefault()
       const newGuy = e.target.anecdote.value
       console.log('in anecdoterform: ',e.target.anecdote.value)
-      
+    
       //tällä ilmoitus kanava uuden muistinpanon lisäämisen varten
-      store.dispatch(newBlogNotif(e.target.anecdote.value))
+      this.props.anectform(e.target.anecdote.value)
       setTimeout(() => {
-          store.dispatch(notifReset())
+          this.props.clearAll()
       }, 5000)
       
       if(newGuy.length > 0){
-          store.dispatch(
-              createBlog(e.target.anecdote.value)
-          )
+          this.props.createnew(e.target.anecdote.value)
       }
       e.target.anecdote.value = ''
   }
@@ -36,9 +33,27 @@ class AnecdoteForm extends React.Component {
       )
   }
 }
-
-AnecdoteForm.contexTypes= {
-    store: PropTypes.object
+const mapStateToProps = (store) => {
+    return {
+        anecdote : store.anecdote
+    }
 }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        anectform: (value) => {
+            dispatch(newBlogNotif(value))
+        },
+        clearAll: (value) => {
+            dispatch(notifReset(value))
+        },
+        createnew: (value) => {
+            dispatch(createBlog(value))
+        }
+    }
+}
+const ConnectedAnecdoteForm = connect(
+    mapStateToProps,
+    mapDispatchToProps
+) (AnecdoteForm)
 
-export default AnecdoteForm
+export default ConnectedAnecdoteForm
