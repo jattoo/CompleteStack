@@ -2,24 +2,28 @@ import React from 'react'
 import { createBlog } from './../reducers/anecdoteReducer'
 import { connect } from 'react-redux'
 import { newBlogNotif, notifReset } from './../reducers/notifReducer'
+import anecdoteService from './../services/notes'
 
 class AnecdoteForm extends React.Component {
     
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
       e.preventDefault()
-      const newGuy = e.target.anecdote.value
+      const content = e.target.anecdote.value
       console.log('in anecdoterform: ',e.target.anecdote.value)
-    
+      e.target.anecdote.value = ''
+
+      const inComingAnecdote = await anecdoteService.createAnecdote(content)
+
       //tällä ilmoitus kanava uuden muistinpanon lisäämisen varten
-      this.props.anectform(e.target.anecdote.value)
+      this.props.anectform(content)
       setTimeout(() => {
           this.props.clearAll()
       }, 5000)
       
-      if(newGuy.length > 0){
-          this.props.createnew(e.target.anecdote.value)
+      if(content.length > 0){
+          this.props.createnew(inComingAnecdote)
       }
-      e.target.anecdote.value = ''
+      
   }
   render() {
       return (

@@ -1,4 +1,3 @@
-const getId = () => (100000*Math.random()).toFixed(0)
 const reducer = (store = [], action) => {
     switch (action.type){
     case 'VOTE':
@@ -16,15 +15,11 @@ const reducer = (store = [], action) => {
     }
 }
 
-export const createBlog = (content) => {
-    console.log('content: ', content)
+export const createBlog = (data) => {
+    console.log('content: ', data)
     return {
         type: 'CREATE', 
-        data: {
-            content,
-            id: getId(), 
-            votes:0 
-        }
+        data
     }
 }
 export const voting = (id) => {
