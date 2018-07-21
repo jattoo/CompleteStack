@@ -1,0 +1,28 @@
+#notif {
+    color: #008000;
+    
+}
+
+.blogStyle {
+    padding-top: 10px;
+    padding-left: 2px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(0, 255, 106);
+    margin-bottom: 10px;
+  }
+
+.SingleStyle {
+    color: rgb(255, 0, 200);
+    padding-top: 10px;
+    padding-left: 2px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(4, 0, 255);
+    margin-bottom: 10px;
+}
+
+.poisto{
+    background-color: rgb(18, 74, 228);
+    color: white;
+}

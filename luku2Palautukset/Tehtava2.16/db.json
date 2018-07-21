@@ -1,0 +1,24 @@
+{
+    "persons": [
+      {
+        "name": "Martti Tienari",
+        "number": "040-123456",
+        "id": 2
+      },
+      {
+        "name": "Lea Kutvonen",
+        "number": "040-123456",
+        "id": 4
+      },
+      {
+        "name": "Moe Kuningas",
+        "number": "123-456-7889",
+        "id": 5
+      },
+      {
+        "name": "Arto Järvinen",
+        "number": "968-443322-11",
+        "id": 6
+      }
+    ]
+  }
