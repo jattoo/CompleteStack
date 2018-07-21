@@ -32,8 +32,13 @@
     },
     {
       "content": "dont crash on me",
-      "votes": 0,
+      "votes": 3,
       "id": "mq166fE"
+    },
+    {
+      "content": "Hello world!",
+      "votes": 2,
+      "id": "SyLVG8M"
     }
   ]
 }

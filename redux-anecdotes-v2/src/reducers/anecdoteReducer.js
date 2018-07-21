@@ -16,7 +16,6 @@ const reducer = (store = [], action) => {
 }
 
 export const createBlog = (data) => {
-    console.log('content: ', data)
     return {
         type: 'CREATE', 
         data
