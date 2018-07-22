@@ -1,3 +1,5 @@
+import noteService from  '../services/notes'
+
 const reducer = (store = [], action) => {
     switch (action.type){
     case 'VOTE':
@@ -27,10 +29,14 @@ export const voting = (id) => {
         id
     }
 } 
-export const anectInit = (data) => {
-    return {
-        type: 'INIT_ANECDOTES',
-        data
+export const anectInit = () => {
+    return async (dispatch) => {
+        const anecdotes = await noteService.getAll()
+        dispatch({
+            type: 'INIT_ANECDOTES',
+            data: anecdotes
+        })
+        
     }
 }
 export default reducer
