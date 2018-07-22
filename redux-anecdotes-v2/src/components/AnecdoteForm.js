@@ -2,7 +2,6 @@ import React from 'react'
 import { createBlog } from './../reducers/anecdoteReducer'
 import { connect } from 'react-redux'
 import { newBlogNotif, notifReset } from './../reducers/notifReducer'
-import anecdoteService from './../services/notes'
 
 class AnecdoteForm extends React.Component {
     
@@ -12,8 +11,6 @@ class AnecdoteForm extends React.Component {
       console.log('in anecdoterform: ',e.target.anecdote.value)
       e.target.anecdote.value = ''
 
-      const inComingAnecdote = await anecdoteService.createAnecdote(content)
-
       //tällä ilmoitus kanava uuden muistinpanon lisäämisen varten
       this.props.anectform(content)
       setTimeout(() => {
@@ -21,7 +18,7 @@ class AnecdoteForm extends React.Component {
       }, 5000)
       
       if(content.length > 0){
-          this.props.createnew(inComingAnecdote)
+          this.props.createnew(content)
       }
       
   }

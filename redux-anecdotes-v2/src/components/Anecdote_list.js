@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { notifNews , notifReset  } from './../reducers/notifReducer'
 import { voting } from './../reducers/anecdoteReducer'
 import Filter from './Filter'
-import anecdoteServices from './../services/notes'
 
 class AnecdoteList extends React.Component {
     render() {
@@ -21,8 +20,7 @@ class AnecdoteList extends React.Component {
                         <div>
                         has <a className="voteNumbers"><b>{anecdote.votes}</b></a>{' '}
                             <button onClick={async () =>
-                            {const changedObj = await anecdoteServices.updateAnecdotes(anecdote.id, anecdote)
-                                console.log("the changes: ",changedObj)
+                            {
                             this.props.votersCard(anecdote.id)
                             this.props.sendNotifications(anecdote.content)
                             setTimeout(() => {

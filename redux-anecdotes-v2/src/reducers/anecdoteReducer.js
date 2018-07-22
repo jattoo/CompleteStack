@@ -17,16 +17,24 @@ const reducer = (store = [], action) => {
     }
 }
 
-export const createBlog = (data) => {
-    return {
-        type: 'CREATE', 
-        data
+export const createBlog = (content) => {
+    return async (dispatch) => {
+        const inComingAnecdote = await noteService.createAnecdote(content)
+        dispatch({
+            type: 'CREATE', 
+            data: inComingAnecdote
+        })
     }
 }
 export const voting = (id) => {
-    return {
-        type: 'VOTE',
-        id
+    return async(dispatch) => {
+        const findOut  = await noteService.getAll()
+        const anecdote = findOut.find(f => f.id === id)
+        await noteService.updateAnecdotes(anecdote.id, anecdote)
+        dispatch({
+            type: 'VOTE',
+            id
+        })        
     }
 } 
 export const anectInit = () => {
