@@ -1,7 +1,7 @@
 import React from 'react'
 import { createBlog } from './../reducers/anecdoteReducer'
 import { connect } from 'react-redux'
-import { newBlogNotif, notifReset } from './../reducers/notifReducer'
+import { newBlogNotif } from './../reducers/notifReducer'
 
 class AnecdoteForm extends React.Component {
     
@@ -12,10 +12,7 @@ class AnecdoteForm extends React.Component {
       e.target.anecdote.value = ''
 
       //tällä ilmoitus kanava uuden muistinpanon lisäämisen varten
-      this.props.anectform(content)
-      setTimeout(() => {
-          this.props.clearAll()
-      }, 5000)
+      this.props.anectform(`you've added  ${content}`, 5000)
       
       if(content.length > 0){
           this.props.createnew(content)
@@ -41,11 +38,8 @@ const mapStateToProps = (store) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        anectform: (value) => {
-            dispatch(newBlogNotif(value))
-        },
-        clearAll: (value) => {
-            dispatch(notifReset(value))
+        anectform: (value,time) => {
+            dispatch(newBlogNotif(value, time))
         },
         createnew: (value) => {
             dispatch(createBlog(value))

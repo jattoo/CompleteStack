@@ -2,11 +2,8 @@
 let initialState = 'hello world'
 
 const notifReducer = (store =  initialState, action) => {
-    //console.log('notifR: ', store.length)
     switch (action.type) {
     case 'NOTICE':
-        //store = action.text
-        //store.push(action.text)
         console.log('notice action: ',action.text)
         return action.text
     case 'RESET':
@@ -19,23 +16,43 @@ const notifReducer = (store =  initialState, action) => {
         return store
     }
 }
-export const notifNews = (text) => {
-    return {
-        type: 'NOTICE',
-        text: 'you voted '+ text 
+export const notifNews = (text, time) => {
+    return async (dispatch) => {
+        dispatch({
+            type: 'NOTICE',
+            text
+        })
+        setTimeout(() => {
+            dispatch ({
+                type: 'RESET',
+                text: 'No changes now'
+            })
+        }, time)
     }
 }
+
+/*
+ei ole käytössä  enää. Jätin sen tänne omaan käyttöön
 export const notifReset = () => {
     return {
         type: 'RESET',
         text: 'No Changes yet'
     }
-}
- 
-export const newBlogNotif = (text) => {
-    return {
-        type: 'NEWNOTE',
-        text: 'you\'ve added ' + text 
+}*/
+
+
+export const newBlogNotif = (text, time) => {
+    return async (dispatch) => {
+        dispatch ({
+            type: 'NEWNOTE',
+            text 
+        })
+        setTimeout(() => {
+            dispatch ({
+                type: 'RESET',
+                text: 'No changes now'
+            })
+        }, time)
     }
 }
 export default notifReducer

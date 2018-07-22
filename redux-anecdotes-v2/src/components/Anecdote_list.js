@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { notifNews , notifReset  } from './../reducers/notifReducer'
+import { notifNews } from './../reducers/notifReducer'
 import { voting } from './../reducers/anecdoteReducer'
 import Filter from './Filter'
 
@@ -22,10 +22,8 @@ class AnecdoteList extends React.Component {
                             <button onClick={async () =>
                             {
                             this.props.votersCard(anecdote.id)
-                            this.props.sendNotifications(anecdote.content)
-                            setTimeout(() => {
-                                this.props.clearAll()
-                            }, 5000)}
+                            this.props.sendNotifications(`You voted ${anecdote.content}`,5000)
+                            }
                             }
                             >vote</button>
                         </div>
@@ -52,11 +50,8 @@ const mapDispatchToProps = (dispatch) => {
         votersCard: (value) => {
             dispatch(voting(value))
         },
-        sendNotifications: (value) => {
-            dispatch(notifNews(value))
-        },
-        clearAll: (value) => {
-            dispatch(notifReset(value))
+        sendNotifications: (value,time) => {
+            dispatch(notifNews(value, time))
         }
     }
 }
