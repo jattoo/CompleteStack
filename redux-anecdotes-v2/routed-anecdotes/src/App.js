@@ -1,12 +1,5 @@
 import React from 'react'
-
-const Menu = () => (
-  <div>    
-    <a href='#'>anecdotes</a>&nbsp;
-    <a href='#'>create new</a>&nbsp;
-    <a href='#'>about</a>&nbsp;
-  </div>
-)
+import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
@@ -139,11 +132,29 @@ class App extends React.Component {
     return (
       <div>
         <h1>Software anecdotes</h1>
-          <Menu />
-          <AnecdoteList anecdotes={this.state.anecdotes} />
-          <About />      
-          <CreateNew addNew={this.addNew}/>
-        <Footer />
+          <Router>
+            <div>
+            <div>
+              <Link to='/'>anecdotes</Link>&nbsp;
+              <Link to='/createnew'>create new</Link>&nbsp;
+              <Link to='/about'>about</Link>&nbsp;
+           </div>
+              <Route exact path="/" render={() =><div>
+                <AnecdoteList anecdotes={this.state.anecdotes} /> 
+                <Footer /></div>} />
+              <Route exact path="/about" render={() => 
+              <div>
+                <About />
+                <Footer />
+              </div>} />
+              <Route exact path="/createnew" render={() => 
+              <div>
+                <CreateNew addNew={this.addNew}/>
+                <Footer />
+              </div>} />
+            </div>
+          </Router>
+              
       </div>
     );
   }
