@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
@@ -44,7 +44,6 @@ const About = () => (
 const Footer = () => (
   <div>
     Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
-
     See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code. 
   </div>
 )
@@ -72,6 +71,10 @@ class CreateNew extends React.Component {
       info: this.state.info,
       votes: 0
     })
+    this.props.history.push('/')
+  }
+  handleClick= (e) => {
+    e.preventDefault()
   }
 
   render() {
@@ -126,7 +129,15 @@ class App extends React.Component {
 
   addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
-    this.setState({ anecdotes: this.state.anecdotes.concat(anecdote) })
+    this.setState({ 
+      anecdotes: this.state.anecdotes.concat(anecdote),
+      notification: 'a new anecdote ' + anecdote.content
+     })
+     setTimeout(() => {
+       this.setState({
+         notification: null
+       })
+     }, 5000);
   }
 
   anecdoteById = (id) =>
@@ -157,8 +168,9 @@ class App extends React.Component {
               <Link to='/createnew'>create new</Link>&nbsp;
               <Link to='/about'>about</Link>&nbsp;
            </div>
+           <div>{this.state.notification}</div>
               <Route exact path="/" render={() =><div>
-                <AnecdoteList anecdotes={this.state.anecdotes} /> 
+                <AnecdoteList anecdotes={this.state.anecdotes}/> 
                 <Footer /></div>} />
                 <Route exact path="/anecdotes/:id" render={({ match }) =>
                     <Anecdote anecdoteOne={this.anecdoteById(match.params.id)} /> 
@@ -169,9 +181,9 @@ class App extends React.Component {
                 <About />
                 <Footer />
               </div>} />
-              <Route exact path="/createnew" render={() => 
+              <Route exact path="/createnew" render={({ history }) => 
               <div>
-                <CreateNew addNew={this.addNew}/>
+                <CreateNew addNew={this.addNew} history={history}/>
                 <Footer />
               </div>} />
             </div>
