@@ -167,15 +167,21 @@ class App extends React.Component {
       borderRadius: 5,
       marginTop: 5
     }
+    const menuColour = {
+      fontSize: 20,
+      background: 'lightBlue',
+      padding: 10
+    }
+  
     return (
       <div>
         <h1>Software anecdotes</h1>
           <Router>
             <div>
-            <div>
-              <Link to='/'>anecdotes</Link>&nbsp;
-              <Link to='/createnew'>create new</Link>&nbsp;
-              <Link to='/about'>about</Link>&nbsp;
+            <div style={menuColour}>
+                <Link className="menu" to='/'>anecdotes</Link>&nbsp;
+                <Link className="menu" to='/createnew'>create new</Link>&nbsp;
+                <Link className="menu" to='/about'>about</Link>&nbsp;
            </div>
            <div style={notifColour}>{this.state.notification}</div>
               <Route exact path="/" render={() =><div>
