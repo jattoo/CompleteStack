@@ -157,7 +157,16 @@ class App extends React.Component {
   }
 
   render() {
-    
+    const notifColour = {
+      color: 'green',
+      fontStyle: 'italic',
+      fontSize: 16,
+      border: 'solid',
+      borderWidth: 0.5,
+      padding: 5,
+      borderRadius: 5,
+      marginTop: 5
+    }
     return (
       <div>
         <h1>Software anecdotes</h1>
@@ -168,7 +177,7 @@ class App extends React.Component {
               <Link to='/createnew'>create new</Link>&nbsp;
               <Link to='/about'>about</Link>&nbsp;
            </div>
-           <div>{this.state.notification}</div>
+           <div style={notifColour}>{this.state.notification}</div>
               <Route exact path="/" render={() =><div>
                 <AnecdoteList anecdotes={this.state.anecdotes}/> 
                 <Footer /></div>} />
