@@ -1,13 +1,25 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { Table, ControlLabel, FormControl,  FormGroup } from 'react-bootstrap'
+
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >
-      <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
-    </ul>  
+    <Table  striped>
+      <tbody>
+      {anecdotes.map(anecdote => 
+          <tr key={anecdote.id} >
+            <td>
+              <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+            </td>
+            <td>
+              {anecdote.author}
+            </td>
+          </tr>
+      )}
+      </tbody>
+    </Table>  
   </div>
 )
 
@@ -82,19 +94,30 @@ class CreateNew extends React.Component {
       <div>
         <h2>create a new anecdote</h2>
         <form onSubmit={this.handleSubmit}>
-          <div>
+        <FormGroup>
+          <ControlLabel>
             content 
-            <input name='content' value={this.state.content} onChange={this.handleChange} />
-          </div>
-          <div>
+          </ControlLabel>
+          <FormControl
+            name='content' value={this.state.content} onChange={this.handleChange} 
+           />
+          
+          <ControlLabel>
             author
-            <input name='author' value={this.state.author} onChange={this.handleChange} />
-          </div>
-          <div>
+          </ControlLabel>
+          <FormControl
+              name='author' value={this.state.author} onChange={this.handleChange} 
+          />
+          
+          <ControlLabel>
             url for more info
-            <input name='info' value={this.state.info} onChange={this.handleChange} />
-          </div> 
+            </ControlLabel>
+            <FormControl
+              name='info' value={this.state.info} onChange={this.handleChange} 
+            />
+           
           <button>create</button>
+          </FormGroup>
         </form>
       </div>  
     )
@@ -174,7 +197,7 @@ class App extends React.Component {
     }
   
     return (
-      <div>
+      <div className="container">
         <h1>Software anecdotes</h1>
           <Router>
             <div>
