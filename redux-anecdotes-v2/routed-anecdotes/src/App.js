@@ -4,19 +4,17 @@ import {
   Route, Link, Redirect
 } from 'react-router-dom'
 import { Table, FormGroup, FormControl, ControlLabel, Button, Alert,
-        Navbar, Grid, NavbarBrand, NavItem, Nav, MenuItem, NavDropdown, 
-        Row, Message, Image,Col, Thumbnail } from 'react-bootstrap'
+        Navbar, Grid,  NavItem, Nav, 
+        Row, Col, Thumbnail, Well, Collapse } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import Steve_Jobs from './images/Steve_Jobs.jpg'
 
 const Home = () => (
   <div>
     <h2>TKTL notes app</h2>
-
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
   </div>
 )
-
 const Note = ({note}) => {
   return(
   <div>
@@ -133,7 +131,8 @@ class App extends React.Component {
         }
       ],
       user: null,
-      message: ''
+      message: '',
+      more: false
     }
   }
 
@@ -145,7 +144,10 @@ class App extends React.Component {
   }
 
   render() {
-    
+    const test = 'The important factor when using Lorem ipsum text' +
+      'is that the text looks realistic otherwise the brochure or book' +
+      'will not look very good. Lorem Ipsum is dummy text which has no' +
+     'meaning however looks very similar to real text.'
     const noteById = (id) =>
       this.state.notes.find(note => note.id === Number(id)) 
 
@@ -222,6 +224,21 @@ class App extends React.Component {
              } />
           </div>
         </Router>
+        <div>
+          <br />
+          <Button onClick={(() => 
+            this.setState({ more: !this.state.more})
+          )} bsStyle="info">
+          Read More
+          </Button>
+          <Collapse in={this.state.more}>
+            <div>
+              <Well>
+                {test}
+              </Well>
+            </div>
+          </Collapse>
+        </div>
         <div style={style}>
           <br />
           <em>Note app, Department of Computer Science 2018</em>
@@ -230,5 +247,4 @@ class App extends React.Component {
     )
   }
 }
-
 export default App
