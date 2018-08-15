@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImI0YmFydCIsImlkIjoiNWIyYmM5OWIzY2I0MTExZWI4MzE3MDM4IiwiaWF0IjoxNTMwMDQxNDM2fQ.F-8gZUWSSP-oqZpOay7yuYdBgN02iPgtEwxqkBsEGLk
+
+{
+    "title" : "Testing the waters",
+    "author" : "testa test",
+    "likes" : 10,
+    "url" : "https://tcrn.ch/2Li8eje",
+    "userId" : "5b2bc99b3cb4111eb8317038"
+}
