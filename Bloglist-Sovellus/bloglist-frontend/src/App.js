@@ -6,8 +6,42 @@ import Notification from  './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
+import { BrowserRouter as Router,Route, Link } from 'react-router-dom'
+import {  Navbar, NavItem, Nav, Table } from 'react-bootstrap'
+import { LinkContainer } from 'react-router-bootstrap'
+import userService from './services/users'
 
 
+
+const UserView = ({userNow, logout, users}) => {
+  console.log('users: ',users)
+   return (   
+    <div>
+      <h1>blog app</h1>
+      <p>{userNow} logged in <button onClick={logout}>logout</button></p>
+      <br />
+      <h2>users</h2>
+      <Table striped>
+        <thead>
+          <tr>
+            <th></th>
+              <th>blog added</th>
+          </tr>
+        </thead>
+              {users.map(blog =>
+            <tbody>
+            <tr key={blog.id}>
+              <td >
+                {blog.name}
+              </td>
+            <td>{blog.blogs.length}</td>
+            </tr>
+        </tbody>
+          )}
+      </Table>
+    </div>
+   )
+}
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -20,7 +54,8 @@ class App extends React.Component {
       author: '',
       url: '',
       notifs: '',
-      store: []
+      store: [],
+      allUsers: []
       
     }
     this.addABlog = this.addABlog.bind(this)
@@ -29,12 +64,17 @@ class App extends React.Component {
     this.handleNoteBlogChanges = this.handleNoteBlogChanges.bind(this)
     this.addLikes = this.addLikes.bind(this)
     this.cancelLikes = this.cancelLikes.bind(this)
-
   }
 
   componentDidMount() {
     console.log('user in the begining: ', this.state.user)
     //
+    userService.getAll().then(user => {
+      this.setState({
+        allUsers: user
+      })
+    })
+
     blogService.getAll().then(blogs =>{
       //blogilistan frontend, osa 8
       // määrritellaan taulukkon tulevan prosessien käyttöön.
@@ -49,6 +89,8 @@ class App extends React.Component {
       let startingPoint = highestLikes + 1
       const stoppingPoint = lowest - 1
 
+      
+      
       //whilen avulla kerrättään blogit ja sijoitettaan aikaisemmin luotu taulukkoon
       while (startingPoint > stoppingPoint){
         blogs.map(m => m.likes === startingPoint ? deepCopy.push(m) : '')
@@ -63,13 +105,15 @@ class App extends React.Component {
     const userOnlinejSON = window.localStorage.getItem('currentUser')
     console.log('user: ', userOnlinejSON)
     if (userOnlinejSON ){
-      const user = JSON.parse(userOnlinejSON )
+      const user = JSON.parse(userOnlinejSON)
 
       this.setState({user})
       blogService.setToken(user.token)
     }
    
   } 
+
+  
 
   addABlog = (e) =>{
     e.preventDefault()
@@ -241,14 +285,13 @@ class App extends React.Component {
         })
     }
   }
- 
   handleChanges = (e) => {
     this.setState({
       [e.target.name] : e.target.value
     })
   }
-
   render() {
+    console.log(this.state.allUsers)
     const loginForm = () => (
         <LoginForm
           visible={this.state.visible}
@@ -261,31 +304,16 @@ class App extends React.Component {
 
     const blogForm = () => (
       <div>
-        <h2>Blogs</h2>
         <p>{this.state.user.name} logged in <button onClick={this.logout}>logout</button></p>
       </div>
     )
 
-    //Otettaan togglable komponentin käyttöön täällä.
-    const makeAblogForm = () => (
-      <Togglable buttonLabel="Add New Blog" >
-        <BlogForm 
-          visible={this.visible}
-          onSubmit={this.addABlog}
-          title={this.state.title}
-          handleChange={this.handleNoteBlogChanges}
-          author={this.state.author}
-          url={this.state.url}
-        />
-      </Togglable>
-    )
-
-    return (
-      
+    
+    const home = () => (
       <div>
+      
        {}
         <Notification msg={this.state.notifs} />
-        
         {this.state.user === null ?
         <div className ="login">
           <h1>Log into application</h1>
@@ -331,7 +359,51 @@ class App extends React.Component {
         }
       </div>
       
-          
+      )
+
+    //Otettaan togglable komponentin käyttöön täällä.
+    const makeAblogForm = () => (
+      <Togglable buttonLabel="Add New Blog" >
+        <BlogForm 
+          visible={this.visible}
+          onSubmit={this.addABlog}
+          title={this.state.title}
+          handleChange={this.handleNoteBlogChanges}
+          author={this.state.author}
+          url={this.state.url}
+        />
+      </Togglable>
+    )
+
+    return (
+      <div>
+      <Router>
+        <div>
+              <Navbar.Collapse>
+                <Nav>
+                  <LinkContainer to="/blogs">
+                    <NavItem>
+                     Blogs
+                    </NavItem>
+                  </LinkContainer>
+                  <LinkContainer to="/users">
+                  <NavItem>
+                    Users
+                  </NavItem>
+                  </LinkContainer>
+                </Nav>  
+              </Navbar.Collapse>
+          <Route exact path="/" render={() => home()} />
+          <Route exact path="/blogs" render={() => home()}/>
+          <Route exavt path="/users" render={() => 
+            <UserView 
+              userNow={this.state.user.name} 
+              logout={this.logout}
+              users={this.state.allUsers}
+            />} />
+        </div>
+      </Router>
+      </div>
     )
   }
 }
