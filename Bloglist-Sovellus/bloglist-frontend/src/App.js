@@ -14,12 +14,12 @@ import userService from './services/users'
 
 
 const UserView = ({userNow, logout, users}) => {
-  console.log('users: ',users)
    return (   
     <div>
       <h1>blog app</h1>
       <p>{userNow} logged in <button onClick={logout}>logout</button></p>
       <br />
+      <button>create new</button>
       <h2>users</h2>
       <Table striped>
         <thead>
@@ -28,20 +28,54 @@ const UserView = ({userNow, logout, users}) => {
               <th>blog added</th>
           </tr>
         </thead>
-              {users.map(blog =>
-            <tbody>
-            <tr key={blog.id}>
-              <td >
-                {blog.name}
-              </td>
-            <td>{blog.blogs.length}</td>
-            </tr>
-        </tbody>
+              {users.map(user =>
+              <tbody>
+                <tr key={user.id}>
+                  <td >
+                    <Link to={`/users/${user.id}`}>{user.name} </Link>
+                  </td>
+                  <td>{user.blogs.length}</td>
+                </tr>
+              </tbody>
           )}
       </Table>
     </div>
    )
 }
+
+const UsersBlog = (props) => {
+  const blogs= []
+  props.user === undefined ? 
+  props.allUsers.map(blog => blog.find(m => m.id === props.id))
+     :
+  props.user.blogs.map(blog => blogs.push({ blog }))
+  console.log('blogs: ',blogs.map(b => b.blog._id))
+  if(props.user === undefined){  
+    return(
+        <div>
+          <h1>{props.allUsers.name}</h1>
+          <h2>{'Added blogs'}</h2>
+            {blogs.map(blog =>
+              <div key={blog.blog._id}>
+                <li>{blog.blog.title}</li>
+              </div>
+            )}
+          </div>
+      )
+  } else if(props.user !== undefined) {
+    return (
+      <div>
+        <h1>{props.user.name}</h1>
+        <h2>{'Added blogs'}</h2>
+          {blogs.map(blog =>
+            <div key={blog.blog._id}>
+              <li>{blog.blog.title}</li>
+            </div>
+          )}
+      </div>
+    )}
+
+  }
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -290,8 +324,13 @@ class App extends React.Component {
       [e.target.name] : e.target.value
     })
   }
+
+
+
   render() {
-    console.log(this.state.allUsers)
+    const userById= (id) => {
+      return this.state.allUsers.find(user => user.id === id)
+    }
     const loginForm = () => (
         <LoginForm
           visible={this.state.visible}
@@ -374,7 +413,14 @@ class App extends React.Component {
         />
       </Togglable>
     )
-
+    if (this.state.user === null ){
+      return (
+        <div>
+          {home()}
+        </div>
+        
+      )
+    }
     return (
       <div>
       <Router>
@@ -395,12 +441,22 @@ class App extends React.Component {
               </Navbar.Collapse>
           <Route exact path="/" render={() => home()} />
           <Route exact path="/blogs" render={() => home()}/>
-          <Route exavt path="/users" render={() => 
+          <Route exact path="/users" render={() => 
             <UserView 
               userNow={this.state.user.name} 
               logout={this.logout}
               users={this.state.allUsers}
             />} />
+            <Route exact path="/users/:id" render={({match}) =>
+              match.params.user === 'undefined' ? 
+              <UserView 
+                userNow={this.state.user.name} 
+                logout={this.logout}
+                users={this.state.allUsers}
+              />
+              :
+              <UsersBlog user={userById(match.params.id)}  allUsers={this.state.allUsers}/>
+            } />
         </div>
       </Router>
       </div>
