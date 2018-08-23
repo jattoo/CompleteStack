@@ -11,9 +11,47 @@ import {  Navbar, NavItem, Nav, Table } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import userService from './services/users'
 
+const TheBlog = ({blog, usernow, logout, addLikes, cancelLikes}) => {
+  console.log(blog)
+  return (
+    <div>
+      <h1>blog app</h1>
+      <p>{usernow} logged in <button onClick={logout}>logout</button></p>
+      {blog ? 
+      <div className="SingleStyle">
+        <h3>{blog.title}</h3>
+        <a href={blog.url} target="_blank">{blog.url}</a>
+        <h4>{blog.likes}{' '}
+          <button onClick={addLikes(blog.id)} className="likeButton">Add</button>
+          <button onClick={cancelLikes(blog.id)} className="cancelButton">Cancel</button><br/></h4>
+        <h4>{'added by '}{blog.user.name ? blog.user.name : 'Anonymous'}</h4>
 
+      </div>  
+      :
+      <div>
+        {'none'}
+      </div>
+    }
+    </div>
+  )
+}
+
+const TestBlog = (props) => {
+  return(
+    <div >
+      <h1>blog app</h1>
+      <p>{props.userNow} logged in <button onClick={props.logout}>logout</button></p>
+      {props.blog.map(bl => 
+        <div key={bl.id}>
+          <Link to={`/blogs/${bl.id}`}><h3 className='blogStyle'>{bl.title} {bl.author}</h3></Link>
+        </div>
+      )}
+    </div>
+  )
+}
 
 const UserView = ({userNow, logout, users}) => {
+  console.log()
    return (   
     <div>
       <h1>blog app</h1>
@@ -53,7 +91,9 @@ const UsersBlog = (props) => {
   if(props.user === undefined){  
     return(
         <div>
-          <h1>{props.allUsers.name}</h1>
+          <h1>blog app</h1>
+          <p>{props.userNow} logged in <button onClick={props.logout}>logout</button></p>
+          <h2>{props.allUsers.name}</h2>
           <h2>{'Added blogs'}</h2>
             {blogs.map(blog =>
               <div key={blog.blog._id}>
@@ -65,7 +105,9 @@ const UsersBlog = (props) => {
   } else if(props.user !== undefined) {
     return (
       <div>
-        <h1>{props.user.name}</h1>
+        <h1>blog app</h1>
+        <p>{props.userNow} logged in <button onClick={props.logout}>logout</button></p>
+        <h2>{props.user.name}</h2>
         <h2>{'Added blogs'}</h2>
           {blogs.map(blog =>
             <div key={blog.blog._id}>
@@ -76,6 +118,7 @@ const UsersBlog = (props) => {
     )}
 
   }
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -216,7 +259,7 @@ class App extends React.Component {
 
   //Ulos kirjautuminen tapahtumankäsittelijä
   logout = (e) => {
-    e.preventDefault()
+   // e.preventDefault()
     window.localStorage.clear()
     
     this.setState({
@@ -331,6 +374,9 @@ class App extends React.Component {
     const userById= (id) => {
       return this.state.allUsers.find(user => user.id === id)
     }
+    const blogById = (id) => {
+      return this.state.blogs.find(blog => blog.id === id)
+    }
     const loginForm = () => (
         <LoginForm
           visible={this.state.visible}
@@ -349,60 +395,60 @@ class App extends React.Component {
 
     
     const home = () => (
-      <div>
-      
-       {}
-        <Notification msg={this.state.notifs} />
-        {this.state.user === null ?
-        <div className ="login">
-          <h1>Log into application</h1>
-         {loginForm()}
-         </div>
-         :
-         <div className="blogtosee">
-          {blogForm()}
-          {this.state.blogs.map(blog => 
-          //Tähän olen päätynyt koska olen poistanut aikaisemat blogit ennen käyttäjän 
-          //lisääminen. Tämän jälkeen sovellus ei käynistynyt kun manuaalisesti lisääsin
-          //mongon kautta uudet blogit. Päädyin tähän ratkaisun
-          
-          blog.user.name === undefined || blog.user.name === this.state.user.name ?  
-          <Blog key={blog.id || blog._id} 
-            title={blog.title}
-            author={blog.author}
-            likes={blog.likes}
-            url={blog.url}
-            username= {'anonymous'}
-            id = {blog.id}
-            addLikes={this.addLikes}
-            cancelLikes={this.cancelLikes}
-            poisto={this.poistoToiminto}
-          /> 
-          :
-          <Blog key={blog.id || blog._id} 
-            title={blog.title}
-            author={blog.author}
-            likes={blog.likes}
-            url={blog.url}
-            username= {blog.user.name}
-            id = {blog.id}
-            addLikes={this.addLikes}
-            cancelLikes={this.cancelLikes}
-            poisto={this.poistoToiminto}
-          /> 
-          
-        )}
-         
-          {makeAblogForm()}
+        <div>
+        
+        {}
+          <Notification msg={this.state.notifs} />
+          {this.state.user === null ?
+          <div className ="login">
+            <h1>Log into application</h1>
+          {loginForm()}
           </div>
-        }
-      </div>
-      
+          :
+          <div className="blogtosee">
+            {blogForm()}
+            {makeAblogForm()}
+            {this.state.blogs.map(blog => 
+            //Tähän olen päätynyt koska olen poistanut aikaisemat blogit ennen käyttäjän 
+            //lisääminen. Tämän jälkeen sovellus ei käynistynyt kun manuaalisesti lisääsin
+            //mongon kautta uudet blogit. Päädyin tähän ratkaisun
+            
+            blog.user.name === undefined || blog.user.name === this.state.user.name ?  
+            <Blog key={blog.id || blog._id} 
+              title={blog.title}
+              author={blog.author}
+              likes={blog.likes}
+              url={blog.url}
+              username= {'anonymous'}
+              id = {blog.id}
+              addLikes={this.addLikes}
+              cancelLikes={this.cancelLikes}
+              poisto={this.poistoToiminto}
+            /> 
+            :
+            <Blog key={blog.id || blog._id} 
+              title={blog.title}
+              author={blog.author}
+              likes={blog.likes}
+              url={blog.url}
+              username= {blog.user.name}
+              id = {blog.id}
+              addLikes={this.addLikes}
+              cancelLikes={this.cancelLikes}
+              poisto={this.poistoToiminto}
+            /> 
+            
+          )}
+          
+           
+            </div>
+          }
+        </div>
       )
 
     //Otettaan togglable komponentin käyttöön täällä.
     const makeAblogForm = () => (
-      <Togglable buttonLabel="Add New Blog" >
+      <Togglable buttonLabel="create new" >
         <BlogForm 
           visible={this.visible}
           onSubmit={this.addABlog}
@@ -429,18 +475,41 @@ class App extends React.Component {
                 <Nav>
                   <LinkContainer to="/blogs">
                     <NavItem>
-                     Blogs
+                      Blogs
                     </NavItem>
                   </LinkContainer>
                   <LinkContainer to="/users">
-                  <NavItem>
-                    Users
-                  </NavItem>
+                    <NavItem>
+                      Users
+                    </NavItem>
                   </LinkContainer>
                 </Nav>  
               </Navbar.Collapse>
-          <Route exact path="/" render={() => home()} />
-          <Route exact path="/blogs" render={() => home()}/>
+          <Route exact path="/" render={() =>
+            <TestBlog 
+              userNow={this.state.user.name}
+              logout={this.state.logout}
+              blog={this.state.blogs}
+            />
+          }/>
+          <Route exact path="/blogs" render={() => 
+            <TestBlog 
+              userNow={this.state.user.name}
+              logout={this.logout}
+              blog={this.state.blogs}
+            />}/>
+          <Route exact path="/blogs/:id" render={({match}) => 
+            match.params.id === 'undefined' ?
+            ''
+            :
+            <TheBlog 
+              blog={blogById(match.params.id)} 
+              usernow={this.state.user.name}  
+              logout={this.logout}
+              addLikes={this.addLikes}
+              cancelLikes={this.cancelLikes}
+            />}
+          />
           <Route exact path="/users" render={() => 
             <UserView 
               userNow={this.state.user.name} 
@@ -455,8 +524,14 @@ class App extends React.Component {
                 users={this.state.allUsers}
               />
               :
-              <UsersBlog user={userById(match.params.id)}  allUsers={this.state.allUsers}/>
+              <UsersBlog 
+                user={userById(match.params.id)}  
+                allUsers={this.state.allUsers}
+                userNow={this.state.user.name}
+                logout={this.logout}
+              />
             } />
+           
         </div>
       </Router>
       </div>
