@@ -7,16 +7,15 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import { BrowserRouter as Router,Route, Link } from 'react-router-dom'
-import {  Navbar, NavItem, Nav, Table } from 'react-bootstrap'
+import {  Navbar, NavItem, Nav, Table, Button } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import userService from './services/users'
 
-const TheBlog = ({blog, usernow, logout, addLikes, cancelLikes}) => {
+const TheBlog = ({blog, addLikes, cancelLikes}) => {
   console.log(blog)
   return (
     <div>
       <h1>blog app</h1>
-      <p>{usernow} logged in <button onClick={logout}>logout</button></p>
       {blog ? 
       <div className="SingleStyle">
         <h3>{blog.title}</h3>
@@ -40,7 +39,6 @@ const TestBlog = (props) => {
   return(
     <div >
       <h1>blog app</h1>
-      <p>{props.userNow} logged in <button onClick={props.logout}>logout</button></p>
       {props.addingblogs}
       {props.blog.map(bl => 
         <div key={bl.id}>
@@ -56,8 +54,6 @@ const UserView = ({userNow, logout, users, addingblogs}) => {
    return (   
     <div>
       <h1>blog app</h1>
-      <p>{userNow} logged in <button onClick={logout}>logout</button></p>
-      <br />
       {addingblogs}
       <h2>users</h2>
       <Table striped>
@@ -93,7 +89,6 @@ const UsersBlog = (props) => {
     return(
         <div>
           <h1>blog app</h1>
-          <p>{props.userNow} logged in <button onClick={props.logout}>logout</button></p>
           <h2>{props.allUsers.name}</h2>
           <h2>{'Added blogs'}</h2>
             {blogs.map(blog =>
@@ -491,20 +486,19 @@ class App extends React.Component {
                       Users
                     </NavItem>
                   </LinkContainer>
+                  <NavItem>
+                  {this.state.user.name} logged in <Button bsStyle='success' onClick={this.logout}>logout</Button>
+                  </NavItem>
                 </Nav>  
               </Navbar.Collapse>
             </Navbar>
           <Route exact path="/" render={() =>
             <TestBlog 
-              userNow={this.state.user.name}
-              logout={this.state.logout}
               blog={this.state.blogs}
             />
           }/>
           <Route exact path="/blogs" render={() => 
             <TestBlog 
-              userNow={this.state.user.name}
-              logout={this.logout}
               blog={this.state.blogs}
               addingblogs={makeAblogForm()}
             />}/>
@@ -514,32 +508,24 @@ class App extends React.Component {
             :
             <TheBlog 
               blog={blogById(match.params.id)} 
-              usernow={this.state.user.name}  
-              logout={this.logout}
               addLikes={this.addLikes}
               cancelLikes={this.cancelLikes}
             />}
           />
           <Route exact path="/users" render={() => 
             <UserView 
-              userNow={this.state.user.name} 
-              logout={this.logout}
               users={this.state.allUsers}
               addingblogs={makeAblogForm()}
             />} />
             <Route exact path="/users/:id" render={({match}) =>
               match.params.user === 'undefined' ? 
               <UserView 
-                userNow={this.state.user.name} 
-                logout={this.logout}
                 users={this.state.allUsers}
               />
               :
               <UsersBlog 
                 user={userById(match.params.id)}  
                 allUsers={this.state.allUsers}
-                userNow={this.state.user.name}
-                logout={this.logout}
               />
             } />
            
