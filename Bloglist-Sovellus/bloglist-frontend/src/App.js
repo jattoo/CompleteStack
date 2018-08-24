@@ -41,6 +41,7 @@ const TestBlog = (props) => {
     <div >
       <h1>blog app</h1>
       <p>{props.userNow} logged in <button onClick={props.logout}>logout</button></p>
+      {props.addingblogs}
       {props.blog.map(bl => 
         <div key={bl.id}>
           <Link to={`/blogs/${bl.id}`}><h3 className='blogStyle'>{bl.title} {bl.author}</h3></Link>
@@ -50,14 +51,14 @@ const TestBlog = (props) => {
   )
 }
 
-const UserView = ({userNow, logout, users}) => {
+const UserView = ({userNow, logout, users, addingblogs}) => {
   console.log()
    return (   
     <div>
       <h1>blog app</h1>
       <p>{userNow} logged in <button onClick={logout}>logout</button></p>
       <br />
-      <button>create new</button>
+      {addingblogs}
       <h2>users</h2>
       <Table striped>
         <thead>
@@ -468,9 +469,16 @@ class App extends React.Component {
       )
     }
     return (
-      <div>
+      <div className='container'>
       <Router>
         <div>
+          <Navbar inverse collapseOnSelect>
+            <Navbar.Header>
+              <Navbar.Brand>
+                TheBlog
+              </Navbar.Brand>
+              <Navbar.Toggle />
+            </Navbar.Header>
               <Navbar.Collapse>
                 <Nav>
                   <LinkContainer to="/blogs">
@@ -485,6 +493,7 @@ class App extends React.Component {
                   </LinkContainer>
                 </Nav>  
               </Navbar.Collapse>
+            </Navbar>
           <Route exact path="/" render={() =>
             <TestBlog 
               userNow={this.state.user.name}
@@ -497,6 +506,7 @@ class App extends React.Component {
               userNow={this.state.user.name}
               logout={this.logout}
               blog={this.state.blogs}
+              addingblogs={makeAblogForm()}
             />}/>
           <Route exact path="/blogs/:id" render={({match}) => 
             match.params.id === 'undefined' ?
@@ -515,6 +525,7 @@ class App extends React.Component {
               userNow={this.state.user.name} 
               logout={this.logout}
               users={this.state.allUsers}
+              addingblogs={makeAblogForm()}
             />} />
             <Route exact path="/users/:id" render={({match}) =>
               match.params.user === 'undefined' ? 
