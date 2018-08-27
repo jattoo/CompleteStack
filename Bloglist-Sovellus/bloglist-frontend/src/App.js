@@ -64,8 +64,8 @@ const UserView = ({userNow, logout, users, addingblogs}) => {
           </tr>
         </thead>
               {users.map(user =>
-              <tbody>
-                <tr key={user.id}>
+              <tbody key={user.id}>
+                <tr>
                   <td >
                     <Link to={`/users/${user.id}`}>{user.name} </Link>
                   </td>
