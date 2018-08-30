@@ -18,8 +18,6 @@ blogRouter.get('/', async (req, res) => {
 blogRouter.post('/', async (req, res) => {
     const body = req.body
     try {
-        
-        
         const decoded = jwt.verify(req.token, process.env.SECRET)
         console.log('id: ', decoded.id)
         //jos tokenit eivät ole tai ovat vaarin
@@ -52,6 +50,25 @@ blogRouter.post('/', async (req, res) => {
             console.log(exception)
             res.status(500).json({error : 'Bra something fought back..'})
         }
+    }
+})
+
+
+blogRouter.put('/:id', async (req, res) => {
+    const body = req.body
+    //console.log('body: ',body)
+    const theOne = await Blog.findById(req.params.id)
+    
+    const blog = {
+        comments: theOne.comments.concat(body)
+    }
+    try{
+        await Blog.findByIdAndUpdate(req.params.id, blog, {new : true})
+        const resp = await blog
+        res.json(resp)
+    } catch(exception) {
+        console.log(exception)
+        res.status(400).send({ error : 'bad request!'})
     }
 })
 

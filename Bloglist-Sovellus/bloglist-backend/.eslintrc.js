@@ -29,7 +29,7 @@ module.exports = {
             "error",
             "never"
         ],
-        "no-unused-vars":"off"
-        
+        "no-unused-vars":"off",
+        "no-console":"off"
     }
 };

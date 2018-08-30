@@ -1,0 +1,6 @@
+PUT  http://localhost:3003/api/blogs/5b362d4f7674130444d870b9
+content-type: application/json
+
+{
+    "comments" : "Kaikkien aikojen mestari!!"
+}
