@@ -13,6 +13,11 @@ import userService from './services/users'
 
 const TheBlog = ({blog, addLikes, cancelLikes}) => {
   console.log(blog)
+  blog ? console.log('blog comments: ',blog.comments.map(m => m.comments) ): ''
+
+  const divStyle= {
+    color: '#3d09e5'
+  };
   return (
     <div>
       <h1>blog app</h1>
@@ -24,12 +29,21 @@ const TheBlog = ({blog, addLikes, cancelLikes}) => {
           <button onClick={addLikes(blog.id)} className="likeButton">Add</button>
           <button onClick={cancelLikes(blog.id)} className="cancelButton">Cancel</button><br/></h4>
         <h4>{'added by '}{blog.user.name ? blog.user.name : 'Anonymous'}</h4>
-
+        <h2>Comments</h2>
+          {blog.comments.map((m, index) => m.comments ?
+          <div key={index}>
+            <ul>
+              <li style={divStyle}>{m.comments}</li>
+            </ul>
+          </div>
+          :
+          ''
+          ) 
+            
+          } 
       </div>  
       :
-      <div>
-        {'none'}
-      </div>
+          ''
     }
     </div>
   )
@@ -65,7 +79,7 @@ const UserView = ({userNow, logout, users, addingblogs}) => {
         </thead>
               {users.map(user =>
               <tbody key={user.id}>
-                <tr>
+                <tr >
                   <td >
                     <Link to={`/users/${user.id}`}>{user.name} </Link>
                   </td>
