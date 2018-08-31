@@ -30,4 +30,9 @@ const deLete = async (id, blog) => {
   const res = await axios.delete(`${baseUrl}/${id}`, blog)
   return res.data
 }
-export default { getAll, setToken, create, handleLikes, deLete}
+
+const coMment = async (id, obj) => {
+  const res = await axios.put(`${baseUrl}/${id}`,obj)
+  return res.data
+}
+export default { getAll, setToken, create, handleLikes, deLete, coMment }

@@ -11,13 +11,51 @@ import {  Navbar, NavItem, Nav, Table, Button } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import userService from './services/users'
 
-const TheBlog = ({blog, addLikes, cancelLikes}) => {
-  console.log(blog)
-  blog ? console.log('blog comments: ',blog.comments.map(m => m.comments) ): ''
+const TheBlog = ({blog, addLikes, cancelLikes,trials, comment, allblogs}) => {
+  let value
+  //console.log(blog)
+  //blog ? console.log('blog comments: ',blog.comments.map(m => m.comments) ): ''
 
   const divStyle= {
     color: '#3d09e5'
   };
+  const handleChange = (e) => {
+    e.target.name = e.target.value
+    value = e.target.name
+  }
+  
+  const addComment = (e) => {
+    e.preventDefault()
+    const blogToEdit = allblogs.find(f => f.id === blog.id)
+   // console.log('Blog to test: ',blogToEdit)
+    //console.log(value)
+    const newComments = {
+      "comments" : value
+    }
+    //console.log('newComments: ',newComments)
+    blogToEdit.comments = []
+    //const result = blogToEdit.comments.concat(newComments)
+    //console.log('result: ',result)
+   
+    blogService
+      .coMment(blog.id, newComments)//result
+      .then(ablog => {
+        //
+        console.log('ablog: ', ablog)
+        blog.comments = blog.comments.concat(ablog)
+        trials = `comment '${value}' added to blog ${blog.title}`
+        value = ''
+        console.log('trials: ', trials)
+        //window.location.reload(true)
+      })
+      setTimeout(() => {
+        trials = null
+        console.log('trials: ', trials)
+      }, 3000)
+     
+  }
+
+
   return (
     <div>
       <h1>blog app</h1>
@@ -30,6 +68,17 @@ const TheBlog = ({blog, addLikes, cancelLikes}) => {
           <button onClick={cancelLikes(blog.id)} className="cancelButton">Cancel</button><br/></h4>
         <h4>{'added by '}{blog.user.name ? blog.user.name : 'Anonymous'}</h4>
         <h2>Comments</h2>
+        <div>
+          <form onSubmit={addComment}>
+          <input 
+            type="text"  
+            name='comment' 
+            value={comment} 
+            onChange={handleChange}
+          />
+          <button >add comment</button>
+          </form>
+        </div>
           {blog.comments.map((m, index) => m.comments ?
           <div key={index}>
             <ul>
@@ -143,7 +192,6 @@ class App extends React.Component {
       notifs: '',
       store: [],
       allUsers: []
-      
     }
     this.addABlog = this.addABlog.bind(this)
     this.logout = this.logout.bind(this)
@@ -199,9 +247,7 @@ class App extends React.Component {
     }
    
   } 
-
-  
-
+ 
   addABlog = (e) =>{
     e.preventDefault()
     console.log('Adding new blog')
@@ -231,6 +277,7 @@ class App extends React.Component {
     
   }
   
+
   //Yhteinen käsittelija fn joka asettaa arvot kentille silloin kun lisataan uuden blogin
   handleNoteBlogChanges = (e) => {
     this.setState({ [e.target.name] : e.target.value})
@@ -347,7 +394,6 @@ class App extends React.Component {
           blogs: this.state.blogs.map(blog => blog.id !== id ? blog : twistedBlog)
         })
       })
-
     }
   }
 
@@ -506,6 +552,7 @@ class App extends React.Component {
                 </Nav>  
               </Navbar.Collapse>
             </Navbar>
+            <Notification msg={this.state.notifs} />
           <Route exact path="/" render={() =>
             <TestBlog 
               blog={this.state.blogs}
@@ -524,6 +571,9 @@ class App extends React.Component {
               blog={blogById(match.params.id)} 
               addLikes={this.addLikes}
               cancelLikes={this.cancelLikes}
+              trials={this.state.notifs}
+              onSubmit={this.addComment}
+              allblogs={this.state.blogs}
             />}
           />
           <Route exact path="/users" render={() => 
