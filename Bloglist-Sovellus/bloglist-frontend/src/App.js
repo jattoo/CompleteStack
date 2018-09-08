@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from  './components/Notification'
+import { notifNews, notifOff } from './reducers/notifReducer'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
@@ -10,15 +11,44 @@ import { BrowserRouter as Router,Route, Link } from 'react-router-dom'
 import {  Navbar, NavItem, Nav, Table, Button } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import userService from './services/users'
+import { connect } from 'react-redux'
+import { blogInit } from './reducers/blogReducer'
+import SimpleBlog from './components/SimpleBlog'
+//import store from './store'
+import PropTypes from 'prop-types'
 
-const TheBlog = ({blog, addLikes, cancelLikes,trials, comment, allblogs}) => {
+const Represent = ({com}) => {
+  const divStyle= {
+    color: '#3d09e5'
+  }
+
+  if ( typeof com.comments === 'object'){
+    return(
+      <div>{
+        com.comments.map(comob =>
+        <div key={comob.id}> 
+        <ul>
+          <li style={divStyle}>{comob.comments}</li>
+        </ul> </div>)
+      }
+      </div>
+    )
+  }
+  return(
+      <div key={com.id}>
+        <ul>
+          <li  style={divStyle}>{com.comments}</li>
+        </ul>
+        
+      </div>
+  )
+}
+const TheBlog = ({blog, addLikes, cancelLikes, comment, allblogs, test}) => {
   let value
   //console.log(blog)
   //blog ? console.log('blog comments: ',blog.comments.map(m => m.comments) ): ''
 
-  const divStyle= {
-    color: '#3d09e5'
-  };
+  
   const handleChange = (e) => {
     e.target.name = e.target.value
     value = e.target.name
@@ -29,40 +59,36 @@ const TheBlog = ({blog, addLikes, cancelLikes,trials, comment, allblogs}) => {
     const blogToEdit = allblogs.find(f => f.id === blog.id)
    // console.log('Blog to test: ',blogToEdit)
     //console.log(value)
+    const generatId = () => Number(Math.random() * 100000000).toFixed(0)
     const newComments = {
-      "comments" : value
+      "comments" : value,
+      "id": generatId()
     }
-    //console.log('newComments: ',newComments)
+
+    
     blogToEdit.comments = []
-    //const result = blogToEdit.comments.concat(newComments)
-    //console.log('result: ',result)
    
     blogService
-      .coMment(blog.id, newComments)//result
+      .coMment(blog.id, newComments)
       .then(ablog => {
         //
-        console.log('ablog: ', ablog)
+        test.dispatch(notifNews(`comment '${value}' added to blog ${blog.title}`))
+        setTimeout(() => {
+          test.dispatch(notifOff(''))
+        }, 3000);
         blog.comments = blog.comments.concat(ablog)
-        trials = `comment '${value}' added to blog ${blog.title}`
         value = ''
-        console.log('trials: ', trials)
-        //window.location.reload(true)
       })
-      setTimeout(() => {
-        trials = null
-        console.log('trials: ', trials)
-      }, 3000)
-     
   }
-
-
+  
   return (
     <div>
       <h1>blog app</h1>
+      
       {blog ? 
       <div className="SingleStyle">
         <h3>{blog.title}</h3>
-        <a href={blog.url} target="_blank">{blog.url}</a>
+        <a href={blog.url} target="_blank">Lisätietoa: {blog.url}</a>
         <h4>{blog.likes}{' '}
           <button onClick={addLikes(blog.id)} className="likeButton">Add</button>
           <button onClick={cancelLikes(blog.id)} className="cancelButton">Cancel</button><br/></h4>
@@ -79,17 +105,10 @@ const TheBlog = ({blog, addLikes, cancelLikes,trials, comment, allblogs}) => {
           <button >add comment</button>
           </form>
         </div>
-          {blog.comments.map((m, index) => m.comments ?
-          <div key={index}>
-            <ul>
-              <li style={divStyle}>{m.comments}</li>
-            </ul>
-          </div>
-          :
-          ''
-          ) 
-            
-          } 
+          {blog.comments.map((m, index) => 
+              <Represent com={m} key={m.id || m.comments.map(sm => sm.id)} />
+            )
+          }
       </div>  
       :
           ''
@@ -103,8 +122,8 @@ const TestBlog = (props) => {
     <div >
       <h1>blog app</h1>
       {props.addingblogs}
-      {props.blog.map(bl => 
-        <div key={bl.id}>
+      {props.blog.map((bl, index) => 
+        <div key={bl.id || index}>
           <Link to={`/blogs/${bl.id}`}><h3 className='blogStyle'>{bl.title} {bl.author}</h3></Link>
         </div>
       )}
@@ -190,7 +209,7 @@ class App extends React.Component {
       author: '',
       url: '',
       notifs: '',
-      store: [],
+      poistot: [],
       allUsers: []
     }
     this.addABlog = this.addABlog.bind(this)
@@ -200,16 +219,22 @@ class App extends React.Component {
     this.addLikes = this.addLikes.bind(this)
     this.cancelLikes = this.cancelLikes.bind(this)
   }
-
+ 
   componentDidMount() {
     console.log('user in the begining: ', this.state.user)
-    //
+    const { store } = this.context
+    this.unsubscribe = store.subscribe(() =>
+      this.forceUpdate()
+    )
+  
     userService.getAll().then(user => {
       this.setState({
         allUsers: user
       })
     })
 
+    
+    this.props.blogInit()
     blogService.getAll().then(blogs =>{
       //blogilistan frontend, osa 8
       // määrritellaan taulukkon tulevan prosessien käyttöön.
@@ -224,8 +249,6 @@ class App extends React.Component {
       let startingPoint = highestLikes + 1
       const stoppingPoint = lowest - 1
 
-      
-      
       //whilen avulla kerrättään blogit ja sijoitettaan aikaisemmin luotu taulukkoon
       while (startingPoint > stoppingPoint){
         blogs.map(m => m.likes === startingPoint ? deepCopy.push(m) : '')
@@ -245,9 +268,13 @@ class App extends React.Component {
       this.setState({user})
       blogService.setToken(user.token)
     }
-   
   } 
- 
+
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
+
+
   addABlog = (e) =>{
     e.preventDefault()
     console.log('Adding new blog')
@@ -262,21 +289,18 @@ class App extends React.Component {
       .then(blog => {
         this.setState({
           blogs : this.state.blogs.concat(blog),
-          notifs : `a new blog '${this.state.title}' by ${this.state.author} added`,
           title:'',
           author:'',
           url: ''
         })
+        this.context.store.dispatch(notifNews(`a new blog ${this.state.title} by ${this.state.author} added`))
+        setTimeout(() => {
+          this.context.store.dispatch(notifOff(''))
+          window.location.reload(true)
+        }, 3000)
+        
       })
-      setTimeout(() => {
-        this.setState({
-          notifs : null
-        })
-      }, 5000);
-      
-    
   }
-  
 
   //Yhteinen käsittelija fn joka asettaa arvot kentille silloin kun lisataan uuden blogin
   handleNoteBlogChanges = (e) => {
@@ -319,27 +343,25 @@ class App extends React.Component {
    // e.preventDefault()
     window.localStorage.clear()
     
-    this.setState({
+    /*this.setState({
       notifs: 'Successfully logging you out'
-    })
-    setTimeout(() => {
-      this.setState({
-        notifs : null
-      })
-      window.location.reload(true)
-    }, 3000);
+    })*/
+    this.context.store.dispatch(notifNews('Successfully logging you out'))
+    setTimeout(() => {window.location.reload(true)}, 3000);
+
+    
     
   }
 
   //poistotoimintoa jos lisääjä on anonymous käyttäjä. 
   //Refaktoroin backendin että antaa kuka tahansa poista lisäämällä if clausit seuraavalla tavall
-  /*
+ /*
     if(blog.user === undefined){
           await blog.remove()
       } else {
         //tai sitten käyttäjä on määritelty tee tässä sulussa olevat koodit
       }
-  */
+ */
   poistoToiminto = (id) => {
     return () => {
       const poistettava = this.state.blogs.find(fp => fp.id === id)
@@ -353,30 +375,24 @@ class App extends React.Component {
           //varmuuden vuoden vuoksi kopioidaan muut blogit ja tallentaa niitä 
           //varastossa
           this.setState({
-            store: this.state.store.push(loput)
+            poistot: this.state.poistot.push(loput)
           })
 
           blogService
             .deLete(id, poistettava)
             .then(res => {
+              
               this.setState({
-                blogs: loput,
-                notifs: `Poistettiin ${poistettava.title}`
+                blogs: loput
               })
             })
-            .catch(error =>{
-              this.setState({
-                error: `${poistettava.title} is no longer here`
-              })
-            })
+            this.context.store.dispatch(notifNews(`Poistettiin ${poistettava.title}`))
             setTimeout(() => {
-              this.setState({
-                error: null
-              })
-            }, 5000);
+              this.context.store.dispatch(notifOff(''))
+            }, 3000);
         }
       }
-      console.log('the store name:', this.state.store)
+      console.log('the poistot name:', this.state.poistot)
     }
     
   }
@@ -433,6 +449,9 @@ class App extends React.Component {
     const blogById = (id) => {
       return this.state.blogs.find(blog => blog.id === id)
     }
+  
+ 
+    
     const loginForm = () => (
         <LoginForm
           visible={this.state.visible}
@@ -552,29 +571,41 @@ class App extends React.Component {
                 </Nav>  
               </Navbar.Collapse>
             </Navbar>
-            <Notification msg={this.state.notifs} />
+            
           <Route exact path="/" render={() =>
-            <TestBlog 
-              blog={this.state.blogs}
-            />
+            <div>
+              <Notification msg={this.context.store.getState().notif} />
+                <TestBlog 
+                  blog={this.state.blogs}
+                  addingblogs={makeAblogForm()}
+                />
+            </div>
           }/>
-          <Route exact path="/blogs" render={() => 
-            <TestBlog 
-              blog={this.state.blogs}
-              addingblogs={makeAblogForm()}
-            />}/>
+          <Route exact path="/blogs" render={() =>
+            <div> 
+              <Notification msg={this.context.store.getState().notif} />
+              <TestBlog 
+                blog={this.state.blogs}
+                addingblogs={makeAblogForm()}
+              />
+            </div>
+          }/>
           <Route exact path="/blogs/:id" render={({match}) => 
             match.params.id === 'undefined' ?
             ''
             :
+            <div>
+            <Notification msg={this.context.store.getState().notif} />
             <TheBlog 
               blog={blogById(match.params.id)} 
               addLikes={this.addLikes}
               cancelLikes={this.cancelLikes}
-              trials={this.state.notifs}
               onSubmit={this.addComment}
               allblogs={this.state.blogs}
-            />}
+              test={this.context.store}
+            /></div>
+            }
+            
           />
           <Route exact path="/users" render={() => 
             <UserView 
@@ -600,5 +631,11 @@ class App extends React.Component {
   }
 }
 
+App.contextTypes = {
+  store: PropTypes.object
+}
 
-export default App;
+export default connect(
+  null,
+ { blogInit, notifNews }
+)(App)
