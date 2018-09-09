@@ -125,7 +125,11 @@ const TestBlog = (props) => {
       {props.addingblogs}
       {props.blog.map((bl, index) => 
         <div key={bl.id || index}>
-          <Link to={`/blogs/${bl.id}`}><h3 className='blogStyle'>{bl.title} {bl.author}</h3></Link>
+        <ListGroup>
+          <ListGroupItem>
+          <Link to={`/blogs/${bl.id}`}><h3>{bl.title} {bl.author}</h3></Link>
+          </ListGroupItem>
+        </ListGroup>
         </div>
       )}
     </div>
@@ -586,7 +590,7 @@ class App extends React.Component {
             <div>
               <Notification msg={this.context.store.getState().notif} />
                 <TestBlog 
-                  blog={this.state.blogs}
+                  blog={this.context.store.getState().blogs}
                   addingblogs={makeAblogForm()}
                 />
             </div>
@@ -595,7 +599,7 @@ class App extends React.Component {
             <div> 
               <Notification msg={this.context.store.getState().notif} />
               <TestBlog 
-                blog={this.state.blogs}
+                blog={this.context.store.getState().blogs}
                 addingblogs={makeAblogForm()}
               />
             </div>
