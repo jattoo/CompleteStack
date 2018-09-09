@@ -8,12 +8,13 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import { BrowserRouter as Router,Route, Link } from 'react-router-dom'
-import {  Navbar, NavItem, Nav, Table, Button } from 'react-bootstrap'
+import {  Navbar, NavItem, Nav, Table, Button, ListGroup, ListGroupItem } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import userService from './services/users'
 import { connect } from 'react-redux'
 import { blogInit } from './reducers/blogReducer'
 import SimpleBlog from './components/SimpleBlog'
+import { userInit } from './reducers/userReducer'
 //import store from './store'
 import PropTypes from 'prop-types'
 
@@ -131,8 +132,8 @@ const TestBlog = (props) => {
   )
 }
 
-const UserView = ({userNow, logout, users, addingblogs}) => {
-  console.log()
+const UserView = ({ users, addingblogs}) => {
+  //console.log('users: ',users.map(user=>user))
    return (   
     <div>
       <h1>blog app</h1>
@@ -145,7 +146,9 @@ const UserView = ({userNow, logout, users, addingblogs}) => {
               <th>blog added</th>
           </tr>
         </thead>
-              {users.map(user =>
+              { users ?
+              users.map(user =>
+              
               <tbody key={user.id}>
                 <tr >
                   <td >
@@ -154,48 +157,46 @@ const UserView = ({userNow, logout, users, addingblogs}) => {
                   <td>{user.blogs.length}</td>
                 </tr>
               </tbody>
-          )}
+          ):
+          ''}
       </Table>
     </div>
    )
 }
 
+
 const UsersBlog = (props) => {
-  const blogs= []
-  props.user === undefined ? 
-  props.allUsers.map(blog => blog.find(m => m.id === props.id))
-     :
-  props.user.blogs.map(blog => blogs.push({ blog }))
-  console.log('blogs: ',blogs.map(b => b.blog._id))
+  
   if(props.user === undefined){  
     return(
         <div>
-          <h1>blog app</h1>
-          <h2>{props.allUsers.name}</h2>
-          <h2>{'Added blogs'}</h2>
-            {blogs.map(blog =>
-              <div key={blog.blog._id}>
-                <li>{blog.blog.title}</li>
-              </div>
-            )}
-          </div>
+          <UserView users={props.allUsers} />
+        </div>
       )
-  } else if(props.user !== undefined) {
+  } else if (props.user !== undefined){
     return (
       <div>
         <h1>blog app</h1>
-        <p>{props.userNow} logged in <button onClick={props.logout}>logout</button></p>
         <h2>{props.user.name}</h2>
-        <h2>{'Added blogs'}</h2>
-          {blogs.map(blog =>
-            <div key={blog.blog._id}>
-              <li>{blog.blog.title}</li>
-            </div>
-          )}
+        <h4>{'Added: '}</h4>
+          {
+            props.user.blogs.map(m =>
+              <div  key={m.id || m._id}>
+                <ListGroup>
+                  <ListGroupItem href="#" disabled>
+                    {m.title}
+                  </ListGroupItem>
+                </ListGroup>
+              </div>
+            )
+          
+          }
       </div>
-    )}
-
+    )
   }
+  }
+
+  
 
 class App extends React.Component {
   constructor(props) {
@@ -235,6 +236,7 @@ class App extends React.Component {
 
     
     this.props.blogInit()
+    this.props.userInit()
     blogService.getAll().then(blogs =>{
       //blogilistan frontend, osa 8
       // määrritellaan taulukkon tulevan prosessien käyttöön.
@@ -444,13 +446,21 @@ class App extends React.Component {
 
   render() {
     const userById= (id) => {
-      return this.state.allUsers.find(user => user.id === id)
+      console.log('userById: ',this.context.store.getState().user.find(user => user.id === id))
+      return this.context.store.getState().user.find(user => user.id === id)
     }
     const blogById = (id) => {
       return this.state.blogs.find(blog => blog.id === id)
     }
   
- 
+    const blogUsers = this.context.store.getState().blogs.map(bluser => 
+      bluser.user.name).length > 1 ? this.context.store.getState().blogs.map(bluser => 
+        bluser.user.name) :
+        ''
+
+      
+    const theUser = this.context.store.getState().blogs.map(bluser =>bluser.user)
+    console.log('the blogs: ', this.context.store.getState().user)
     
     const loginForm = () => (
         <LoginForm
@@ -609,18 +619,18 @@ class App extends React.Component {
           />
           <Route exact path="/users" render={() => 
             <UserView 
-              users={this.state.allUsers}
+              users={this.context.store.getState().user}
               addingblogs={makeAblogForm()}
             />} />
             <Route exact path="/users/:id" render={({match}) =>
               match.params.user === 'undefined' ? 
               <UserView 
-                users={this.state.allUsers}
+                users={this.context.store.getState().user}
               />
               :
               <UsersBlog 
                 user={userById(match.params.id)}  
-                allUsers={this.state.allUsers}
+                allUsers={this.context.store.getState().user}
               />
             } />
            
@@ -637,5 +647,5 @@ App.contextTypes = {
 
 export default connect(
   null,
- { blogInit, notifNews }
+ { blogInit, userInit }
 )(App)
