@@ -15,7 +15,7 @@ import { connect } from 'react-redux'
 import { blogInit } from './reducers/blogReducer'
 import SimpleBlog from './components/SimpleBlog'
 import { userInit } from './reducers/userReducer'
-//import store from './store'
+import { loginInit } from './reducers/loginReducer'
 import PropTypes from 'prop-types'
 
 const Represent = ({com}) => {
@@ -136,13 +136,14 @@ const TestBlog = (props) => {
   )
 }
 
-const UserView = ({ users, addingblogs}) => {
+const UserView = ({ users, view}) => {
   //console.log('users: ',users.map(user=>user))
-   return (   
+   return (
+     <div>  
     <div>
-      <h1>blog app</h1>
-      {addingblogs}
-      <h2>users</h2>
+      {view}
+    <div>
+      <h1>blog app users</h1>
       <Table striped>
         <thead>
           <tr>
@@ -165,6 +166,8 @@ const UserView = ({ users, addingblogs}) => {
           ''}
       </Table>
     </div>
+    </div>
+    </div> 
    )
 }
 
@@ -241,6 +244,7 @@ class App extends React.Component {
     
     this.props.blogInit()
     this.props.userInit()
+    this.props.loginInit()
     blogService.getAll().then(blogs =>{
       //blogilistan frontend, osa 8
       // määrritellaan taulukkon tulevan prosessien käyttöön.
@@ -267,10 +271,10 @@ class App extends React.Component {
 
     //blogilistan frontend, osa 2
     const userOnlinejSON = window.localStorage.getItem('currentUser')
-    console.log('user: ', userOnlinejSON)
+    console.log('user: ',  userOnlinejSON)
     if (userOnlinejSON ){
       const user = JSON.parse(userOnlinejSON)
-
+      console.log('user: ',  user.name)
       this.setState({user})
       blogService.setToken(user.token)
     }
@@ -293,17 +297,17 @@ class App extends React.Component {
     blogService
       .create(newBlog)
       .then(blog => {
+        this.context.store.dispatch(notifNews(`a new blog ${this.state.title} by ${this.state.author} added`))
+        setTimeout(() => {
+          this.context.store.dispatch(notifOff(''))
+        }, 3000)
         this.setState({
           blogs : this.state.blogs.concat(blog),
           title:'',
           author:'',
           url: ''
         })
-        this.context.store.dispatch(notifNews(`a new blog ${this.state.title} by ${this.state.author} added`))
-        setTimeout(() => {
-          this.context.store.dispatch(notifOff(''))
-          window.location.reload(true)
-        }, 3000)
+        
         
       })
   }
@@ -348,15 +352,8 @@ class App extends React.Component {
   logout = (e) => {
    // e.preventDefault()
     window.localStorage.clear()
-    
-    /*this.setState({
-      notifs: 'Successfully logging you out'
-    })*/
     this.context.store.dispatch(notifNews('Successfully logging you out'))
     setTimeout(() => {window.location.reload(true)}, 3000);
-
-    
-    
   }
 
   //poistotoimintoa jos lisääjä on anonymous käyttäjä. 
@@ -456,15 +453,18 @@ class App extends React.Component {
     const blogById = (id) => {
       return this.state.blogs.find(blog => blog.id === id)
     }
-  
-    const blogUsers = this.context.store.getState().blogs.map(bluser => 
-      bluser.user.name).length > 1 ? this.context.store.getState().blogs.map(bluser => 
-        bluser.user.name) :
-        ''
+    
+    const sortedBlogs = this.context.store.getState().blogs.sort(function(a, b){ return  b.likes - a.likes})
+    //console.log('sortedbolgs: ',sortedBlogs)
+    let stateUser 
+    
+    
 
-      
-    const theUser = this.context.store.getState().blogs.map(bluser =>bluser.user)
-    console.log('the blogs: ', this.context.store.getState().user)
+    this.context.store.getState().login === null ? 
+      stateUser = 'none':
+      stateUser = this.context.store.getState().login.name
+    
+    
     
     const loginForm = () => (
         <LoginForm
@@ -487,7 +487,7 @@ class App extends React.Component {
         <div>
         
         {}
-          <Notification msg={this.state.notifs} />
+          <Notification msg={this.context.store.getState().notif} />
           {this.state.user === null ?
           <div className ="login">
             <h1>Log into application</h1>
@@ -580,7 +580,7 @@ class App extends React.Component {
                     </NavItem>
                   </LinkContainer>
                   <NavItem>
-                  {this.state.user.name} logged in <Button bsStyle='success' onClick={this.logout}>logout</Button>
+                  {stateUser} logged in <Button bsStyle='success' onClick={this.logout}>logout</Button>
                   </NavItem>
                 </Nav>  
               </Navbar.Collapse>
@@ -599,7 +599,7 @@ class App extends React.Component {
             <div> 
               <Notification msg={this.context.store.getState().notif} />
               <TestBlog 
-                blog={this.context.store.getState().blogs}
+                blog={sortedBlogs}
                 addingblogs={makeAblogForm()}
               />
             </div>
@@ -624,7 +624,7 @@ class App extends React.Component {
           <Route exact path="/users" render={() => 
             <UserView 
               users={this.context.store.getState().user}
-              addingblogs={makeAblogForm()}
+              view={<Notification msg={this.context.store.getState().notif} />}
             />} />
             <Route exact path="/users/:id" render={({match}) =>
               match.params.user === 'undefined' ? 
@@ -651,5 +651,5 @@ App.contextTypes = {
 
 export default connect(
   null,
- { blogInit, userInit }
+ { blogInit, userInit, loginInit }
 )(App)
