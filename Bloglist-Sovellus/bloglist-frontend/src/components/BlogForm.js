@@ -1,48 +1,52 @@
 import React from 'react'
-import { shallow } from 'enzyme'
-import Blog from './Blog'
+import PropTypes from 'prop-types'
+import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap'
 
+const BlogForm = ({onSubmit, title, handleChange, author, url}) => {
+    return(
+        <div>
+        <ControlLabel>create new</ControlLabel>
+        <form onSubmit={onSubmit}>
+          <FormGroup>
+            <div>
+              title: 
+                <FormControl 
+                  type="text"
+                  name="title"
+                  value={title}
+                  onChange={handleChange}
+                />
+            </div>
+            <div>
+            author: 
+              <FormControl 
+                type="text"
+                name="author"
+                value={author}
+                onChange={handleChange}
+              />
+          </div>
+          <div>
+            url: 
+            <FormControl 
+              type="text"
+              name="url"
+              value={url}
+              onChange={handleChange}
+            />
+          </div>
+          <button>create</button>
+        </FormGroup>
+      </form>
+    </div>
+    )
+}
 
-describe.skip('<Blog test />', () => {
-    let component, blog
-    beforeEach(() => {
-        blog = {
-            title: 'Having some blog test',
-            author: 'Kuningas Moe',
-            url: 'http://mitakuuluu.com',
-            likes: 100,
-            
-        }
-        const mockHandler = jest.fn()
-        component = shallow(
-        <Blog 
-            title={blog.title}
-            author={blog.author}
-            url={blog.url}
-            likes={blog.likes}
-            addLikes={() => mockHandler}
-            cancelLikes={() => mockHandler}
-            poisto={mockHandler}
-    
-        />)
-    })
-    
-    it('after clicking name the details are displayed', () =>{
-        const defaultContentDiv = component.find('.hideContent')
-        defaultContentDiv.simulate('click')
-
-        //alkutilan tarkistus
-        expect(defaultContentDiv.text()).toContain(blog.title)
-        expect(defaultContentDiv.text()).toContain(blog.author)
-        expect(defaultContentDiv.text()).not.toContain(blog.url)
-        expect(defaultContentDiv.text()).not.toContain(blog.likes)
-
-        const contentDiv = component.find('.showContent')
-        
-        //tapahtuman käsittelijän klikkaamisen jälkeen
-        expect(contentDiv.text()).toContain(blog.title)
-        expect(contentDiv.text()).toContain(blog.author)
-        expect(contentDiv.text()).not.toContain(blog.url)
-        expect(contentDiv.text()).not.toContain(blog.likes)
-    })
-})
+BlogForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  author: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired
+}
+export default BlogForm

@@ -18,6 +18,21 @@ import { userInit } from './reducers/userReducer'
 import { loginInit } from './reducers/loginReducer'
 import PropTypes from 'prop-types'
 
+
+const Footer = () => {
+  const divStyle = {
+    background: "black",
+    color: "white",
+    textAlign: "center",
+  }
+  return (
+  <div style={divStyle}>
+    <p>&copy; 2018 TheBlog Team  Respect The Power Of Coffee</p>
+  </div>
+  )
+}
+
+
 const Represent = ({com}) => {
   const divStyle= {
     color: '#3d09e5'
@@ -44,6 +59,8 @@ const Represent = ({com}) => {
       </div>
   )
 }
+
+
 const TheBlog = ({blog, addLikes, cancelLikes, comment, allblogs, test}) => {
   let value
   //console.log(blog)
@@ -121,7 +138,7 @@ const TheBlog = ({blog, addLikes, cancelLikes, comment, allblogs, test}) => {
 const TestBlog = (props) => {
   return(
     <div >
-      <h1>blog app</h1>
+      
       {props.addingblogs}
       {props.blog.map((bl, index) => 
         <div key={bl.id || index}>
@@ -637,7 +654,8 @@ class App extends React.Component {
                 allUsers={this.context.store.getState().user}
               />
             } />
-           
+            <Footer />
+            
         </div>
       </Router>
       </div>
