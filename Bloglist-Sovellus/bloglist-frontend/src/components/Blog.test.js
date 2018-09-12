@@ -15,16 +15,16 @@ describe.skip('<Blog test />', () => {
         }
         const mockHandler = jest.fn()
         component = shallow(
-        <Blog 
-            title={blog.title}
-            author={blog.author}
-            url={blog.url}
-            likes={blog.likes}
-            addLikes={() => mockHandler}
-            cancelLikes={() => mockHandler}
-            poisto={mockHandler}
+            <Blog 
+                title={blog.title}
+                author={blog.author}
+                url={blog.url}
+                likes={blog.likes}
+                addLikes={() => mockHandler}
+                cancelLikes={() => mockHandler}
+                poisto={mockHandler}
     
-        />)
+            />)
     })
     
     it('after clicking name the details are displayed', () =>{

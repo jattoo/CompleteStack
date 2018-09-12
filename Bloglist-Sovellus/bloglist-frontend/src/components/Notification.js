@@ -1,5 +1,6 @@
 import React from 'react'
 
+
 const Notification = ({ msg }) => {
     if (msg === null) {
         return null
@@ -10,5 +11,6 @@ const Notification = ({ msg }) => {
         </div>
     )
 }
+
 
 export default Notification 

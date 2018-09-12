@@ -1,11 +1,11 @@
 const loginReducer = (state = [], action) => {
     switch (action.type) {
-        case 'LOGIN_INIT':
+    case 'LOGIN_INIT':
         //console.log('login data: ',action.data)
         const doSomething = JSON.parse(action.data)
-            return doSomething
-        default:
-            return state
+        return doSomething
+    default:
+        return state
     }
 }
 

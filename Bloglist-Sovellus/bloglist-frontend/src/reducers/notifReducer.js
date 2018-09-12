@@ -1,12 +1,12 @@
 const notifReducer = (store = '', action) => {
     switch (action.type) {
-        case 'NOTICE':
-            console.log('notif action: ',action.text)
-            return action.text
-        case 'RESET':
-            return action.text
-        default:
-            return store
+    case 'NOTICE':
+        console.log('notif action: ',action.text)
+        return action.text
+    case 'RESET':
+        return action.text
+    default:
+        return store
     }
 }
 
