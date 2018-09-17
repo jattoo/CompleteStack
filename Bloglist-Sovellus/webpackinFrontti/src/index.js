@@ -1,28 +1,15 @@
-#notif {
-    color: #008000;
-    
-}
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+import './index.css'
+import store from './store'
+import { Provider } from 'react-redux'
 
-.blogStyle {
-    padding-top: 10px;
-    padding-left: 2px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(0, 255, 106);
-    margin-bottom: 10px;
-  }
-
-.SingleStyle {
-    color: rgb(255, 0, 200);
-    padding-top: 10px;
-    padding-left: 2px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(4, 0, 255);
-    margin-bottom: 10px;
-}
-
-.poisto{
-    background-color: rgb(18, 74, 228);
-    color: white;
-}
+ReactDOM.render(
+    <div>
+        <Provider store={store}>
+            <App />
+        </Provider>
+    </div>,
+    document.getElementById('root')
+)
