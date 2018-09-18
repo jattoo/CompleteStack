@@ -379,7 +379,7 @@ class App extends React.Component {
                       <Navbar inverse collapseOnSelect>
                           <Navbar.Header>
                               <Navbar.Brand>
-                TheBlog
+                                    TheBlog
                               </Navbar.Brand>
                               <Navbar.Toggle />
                           </Navbar.Header>
@@ -387,12 +387,12 @@ class App extends React.Component {
                               <Nav>
                                   <LinkContainer to="/blogs">
                                       <NavItem>
-                      Blogs
+                                            Blogs
                                       </NavItem>
                                   </LinkContainer>
                                   <LinkContainer to="/users">
                                       <NavItem>
-                      Users
+                                            Users
                                       </NavItem>
                                   </LinkContainer>
                                   <NavItem>
@@ -406,7 +406,7 @@ class App extends React.Component {
                           <div>
                               <Notification msg={this.context.store.getState().notif} />
                               <TestBlog 
-                                  blog={this.context.store.getState().blogs}
+                                  blog={sortedBlogs}
                                   addingblogs={makeAblogForm()}
                               />
                           </div>
@@ -419,6 +419,7 @@ class App extends React.Component {
                                   addingblogs={makeAblogForm()}
                               />
                           </div>
+                          
                       }/>
                       <Route exact path="/blogs/:id" render={({match}) => 
                           match.params.id === 'undefined' ?

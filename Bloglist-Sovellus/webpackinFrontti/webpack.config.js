@@ -1,6 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
 
+
+
 const config = (env, argv) => {
     const backend_url = 'http://localhost:3003'
     return {
@@ -28,10 +30,16 @@ const config = (env, argv) => {
                 },
                 {
                     test: /\.css$/,
-                    loader: [
-                        'style-loader',
-                        'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]&sourceMap&-minimize'
-                    ]
+                    loader: 
+                        'style-loader!css-loader'
+                    
+                },
+                {
+                    test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
+                    loader: 'url-loader',
+                    options: {
+                        limit: 10000
+                    }
                 }
             ]
         },
