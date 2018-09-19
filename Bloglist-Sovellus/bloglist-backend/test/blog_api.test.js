@@ -221,7 +221,7 @@ describe('Api level tests with helper fn', () => {
             expect(usersAfterOperation.length).toBe(usersInTheBeginning.length)
         })
         
-        test('if no age supplied then user = adult by default', async () => {
+        test.skip('if no age supplied then user = adult by default', async () => {
             const usersInTheBeginning =await usersInDb()
             
            
@@ -251,9 +251,25 @@ describe('Api level tests with helper fn', () => {
             
             const usersAfterOperation= await usersInDb()
             expect(usersAfterOperation.length).toBe(usersInTheBeginning.length + 1)
+        })
 
+        test('everything is ok', async() => {
+            const blogs = await blogsInDb()
+            
 
-        
+            const blogres = await api
+                .get('/api/blogs')
+                .expect(200)
+            
+            
+            expect(blogres.body.length).toBe(blogs.length)
+
+            const users = await usersInDb()
+            const userRes = await api 
+                .get('/api/blogUsers')
+                .expect(200)
+            
+            expect(userRes.body.lenght).toBe(users.lenght)
         })
 
     })
