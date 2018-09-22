@@ -37,11 +37,8 @@ const config = (env, argv) => {
                     
                 },
                 {
-                    test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
-                    loader: 'url-loader',
-                    options: {
-                        limit: 10000
-                    }
+                    test: /\.(ico|png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
+                    loader: ['url-loader','file-loader']
                 }
             ]
         },
@@ -50,7 +47,8 @@ const config = (env, argv) => {
                 BACKEND_URL: JSON.stringify(backend_url)
             }),
             new HtmlWebpackPlugin({
-                template: 'dist/index.html'
+                template: 'dist/index.html',
+                favicon: 'dist/favicon.ico'
             })
         ],
        
