@@ -10,13 +10,14 @@ const middleware = require('./utils/middleware')
 const config = require('./utils/config')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
+require('dotenv').config()
 
 
 //yhteys kannan väliin muodestettään täällä
 mongoose
     .connect(config.mongoUrl)
     .then(() => {
-        console.log('Connection established to db', config.mongoUrl)
+        console.log('Connection established to db')
     })
     .catch(error => {
         console.log(error)
@@ -27,6 +28,7 @@ app.use(cors())
 app.use(morgan('dev'))
 app.use(middleware.logger)
 app.use(middleware.tokenExtractor)
+app.use(express.static('build'))
 
 //controllers
 app.use('/api/blogs', blogRouter)
@@ -44,4 +46,4 @@ server.on('close', () => {
     mongoose.connection.close()
 })
 
-module.exports= { app, server } 
+module.exports= { app, server }
