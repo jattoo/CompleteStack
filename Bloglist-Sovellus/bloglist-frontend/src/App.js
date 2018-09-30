@@ -7,220 +7,21 @@ import { notifNews, notifOff } from './reducers/notifReducer'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
-import { BrowserRouter as Router,Route, Link } from 'react-router-dom'
-import {  Navbar, NavItem, Nav, Table, Button, ListGroup, ListGroupItem } from 'react-bootstrap'
+import {  HashRouter, Route } from 'react-router-dom'
+import {  Navbar, NavItem, Nav, Button} from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import userService from './services/users'
 import { connect } from 'react-redux'
-import { blogInit } from './reducers/blogReducer'
+import { blogInit, updateBlog, cancelAlike } from './reducers/blogReducer'
 import SimpleBlog from './components/SimpleBlog'
 import { userInit } from './reducers/userReducer'
 import { loginInit } from './reducers/loginReducer'
 import PropTypes from 'prop-types'
-
-
-const Footer = () => {
-    const divStyle = {
-        background: 'black',
-        color: 'white',
-        textAlign: 'center',
-    }
-    return (
-        <div style={divStyle}>
-            <p>&copy; 2018 TheBlog Team  Respect The Power Of Coffee</p>
-        </div>
-    )
-}
-
-
-const Represent = ({com}) => {
-    const divStyle= {
-        color: '#3d09e5'
-    }
-
-    if ( typeof com.comments === 'object'){
-        return(
-            <div>{
-                com.comments.map(comob =>
-                    <div key={comob.id}> 
-                        <ul>
-                            <li style={divStyle}>{comob.comments}</li>
-                        </ul> </div>)
-            }
-            </div>
-        )
-    }
-    return(
-        <div key={com.id}>
-            <ul>
-                <li  style={divStyle}>{com.comments}</li>
-            </ul>
-        
-        </div>
-    )
-}
-
-
-const TheBlog = ({blog, addLikes, cancelLikes, comment, allblogs, test}) => {
-    let value
-    //console.log(blog)
-    //blog ? console.log('blog comments: ',blog.comments.map(m => m.comments) ): ''
-
-  
-    const handleChange = (e) => {
-        e.target.name = e.target.value
-        value = e.target.name
-    }
-  
-    const addComment = (e) => {
-        e.preventDefault()
-        const blogToEdit = allblogs.find(f => f.id === blog.id)
-        // console.log('Blog to test: ',blogToEdit)
-        //console.log(value)
-        const generatId = () => Number(Math.random() * 100000000).toFixed(0)
-        const newComments = {
-            'comments' : value,
-            'id': generatId()
-        }
-
-    
-        blogToEdit.comments = []
-   
-        blogService
-            .coMment(blog.id, newComments)
-            .then(ablog => {
-                //
-                test.dispatch(notifNews(`comment '${value}' added to blog ${blog.title}`))
-                setTimeout(() => {
-                    test.dispatch(notifOff(''))
-                }, 3000)
-                blog.comments = blog.comments.concat(ablog)
-                value = ''
-            })
-    }
-  
-    return (
-        <div>
-            <h1>blog app</h1>
-      
-            {blog ? 
-                <div className="SingleStyle">
-                    <h3>{blog.title}</h3>
-                    <a href={blog.url} target="_blank" rel="noopener noreferrer">Lisätietoa: {blog.url}</a>
-                    <h4>{blog.likes}{' '}
-                        <button onClick={addLikes(blog.id)} className="likeButton">Add</button>
-                        <button onClick={cancelLikes(blog.id)} className="cancelButton">Cancel</button><br/></h4>
-                    <h4>{'added by '}{blog.user.name ? blog.user.name : 'Anonymous'}</h4>
-                    <h2>Comments</h2>
-                    <div>
-                        <form onSubmit={addComment}>
-                            <input 
-                                type="text"  
-                                name='comment' 
-                                value={comment} 
-                                onChange={handleChange}
-                            />
-                            <button >add comment</button>
-                        </form>
-                    </div>
-                    {blog.comments.map((m, index) => 
-                        <Represent com={m} key={m.id || m.comments.map(sm => sm.id)} />
-                    )
-                    }
-                </div>  
-                :
-                ''
-            }
-        </div>
-    )
-}
-
-const TestBlog = (props) => {
-    return(
-        <div >
-      
-            {props.addingblogs}
-            {props.blog.map((bl, index) => 
-                <div key={bl.id || index}>
-                    <ListGroup>
-                        <ListGroupItem>
-                            <Link to={`/blogs/${bl.id}`}><h3>{bl.title} {bl.author}</h3></Link>
-                        </ListGroupItem>
-                    </ListGroup>
-                </div>
-            )}
-        </div>
-    )
-}
-
-const UserView = ({ users, view}) => {
-    //console.log('users: ',users.map(user=>user))
-    return (
-        <div>  
-            <div>
-                {view}
-                <div>
-                    <h1>blog app users</h1>
-                    <Table striped>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>blog added</th>
-                            </tr>
-                        </thead>
-                        { users ?
-                            users.map(user =>
-              
-                                <tbody key={user.id}>
-                                    <tr >
-                                        <td >
-                                            <Link to={`/users/${user.id}`}>{user.name} </Link>
-                                        </td>
-                                        <td>{user.blogs.length}</td>
-                                    </tr>
-                                </tbody>
-                            ):
-                            ''}
-                    </Table>
-                </div>
-            </div>
-        </div> 
-    )
-}
-
-
-const UsersBlog = (props) => {
-  
-    if(props.user === undefined){  
-        return(
-            <div>
-                <UserView users={props.allUsers} />
-            </div>
-        )
-    } else if (props.user !== undefined){
-        return (
-            <div>
-                <h1>blog app</h1>
-                <h2>{props.user.name}</h2>
-                <h4>{'Added: '}</h4>
-                {
-                    props.user.blogs.map(m =>
-                        <div  key={m.id || m._id}>
-                            <ListGroup>
-                                <ListGroupItem href="#" disabled>
-                                    {m.title}
-                                </ListGroupItem>
-                            </ListGroup>
-                        </div>
-                    )
-          
-                }
-            </div>
-        )
-    }
-}
-
-  
+import Footer from './components/Footer'
+import TheBlog from './components/TheBlog'
+import TestBlog from './components/TestBlog'
+import UserView from './components/UserView'
+import UsersBlog from './components/UsersBlog'
 
 class App extends React.Component {
     constructor(props) {
@@ -246,7 +47,7 @@ class App extends React.Component {
     }
  
     componentDidMount() {
-        console.log('user in the begining: ', this.state.user)
+        //console.log('user in the begining: ', this.state.user)
         const { store } = this.context
         this.unsubscribe = store.subscribe(() =>
             this.forceUpdate()
@@ -288,10 +89,10 @@ class App extends React.Component {
 
         //blogilistan frontend, osa 2
         const userOnlinejSON = window.localStorage.getItem('currentUser')
-        console.log('user: ',  userOnlinejSON)
+        //console.log('user: ',  userOnlinejSON)
         if (userOnlinejSON ){
             const user = JSON.parse(userOnlinejSON)
-            console.log('user: ',  user.name)
+            //console.log('user: ',  user.name)
             this.setState({user})
             blogService.setToken(user.token)
         }
@@ -304,11 +105,12 @@ class App extends React.Component {
 
   addABlog = (e) =>{
       e.preventDefault()
-      console.log('Adding new blog')
+      //console.log('Adding new blog')
       const newBlog = {
           title: this.state.title,
           author: this.state.author,
           url: this.state.url,
+          likes: 0
       }
 
       blogService
@@ -335,6 +137,7 @@ class App extends React.Component {
   }
   //sisään kirjautuminen tapahtumankäsittelija
   login = async (e) => {
+      //console.log('login pressed')
       try{
           e.preventDefault()
 
@@ -362,7 +165,7 @@ class App extends React.Component {
               })
           }, 3000)
       }
-      console.log('user after login: ', this.state.user)
+      //console.log('user after login: ', this.state.user)
   }
 
   //Ulos kirjautuminen tapahtumankäsittelijä
@@ -385,7 +188,7 @@ class App extends React.Component {
   poistoToiminto = (id) => {
       return () => {
           const poistettava = this.state.blogs.find(fp => fp.id === id)
-          console.log('Username: ',poistettava.user.name)
+          //console.log('Username: ',poistettava.user.name)
       
           if (poistettava.user.name === undefined) {
       
@@ -412,46 +215,29 @@ class App extends React.Component {
                   }, 3000)
               }
           }
-          console.log('the poistot name:', this.state.poistot)
+          //console.log('the poistot name:', this.state.poistot)
       }
     
   }
 
   //Ei ollut tehtävä annossa. Huvin vuoksi lisääsin sen tykkäyksen peruttamisen varten
   cancelLikes = (id) => {
-      return () => {
-          const twistedBlog = this.state.blogs.find(blog => blog.id === id)
-          twistedBlog.likes = twistedBlog.likes - 1
-    
-          blogService
-              .handleLikes(id, twistedBlog)
-              .then(() => {
-                  this.setState({
-                      blogs: this.state.blogs.map(blog => blog.id !== id ? blog : twistedBlog)
-                  })
-              })
+      return async () => {
+          const twistedBlog = this.context.store.dispatch(cancelAlike(id))
+          //niin ei haluta talletta enää käntään
+          /*await blogService
+              .handleLikes(id, twistedBlog)*/
       }
   }
 
 
 
   addLikes = (id) => {
-      return () => {
-      //Haetaan kannasta etsimmamme blogin ja tallennetaan siitä muuttujaan
-      //Muutujan otettaan käyttöön blogservice funktiossa
-          let twistedBlog = this.state.blogs.find(blog => blog.id === id) 
-          //sen tykkayksen arvon nostetaan nappin painalusta.     
-          twistedBlog.likes =  twistedBlog.likes + 1
-
-          blogService
-              .handleLikes(id, twistedBlog)
-              .then(() => {
-                  this.setState({
-                      //käydään lappi koko blogit ja jos ei ole sama kuin meidän blogin niin
-                      //voidaan palauttaa sen kuin se on muuten palautetaan muokattu versiomme
-                      blogs: this.state.blogs.map(blog => blog.id !== id ? blog : twistedBlog)
-                  })
-              })
+      return async () => {
+          const twistedBlog= this.context.store.dispatch(updateBlog(id))
+          //niin ei haluta talletta enää käntään
+          /* await blogService
+              .handleLikes(id, twistedBlog)*/
       }
   }
   handleChanges = (e) => {
@@ -464,11 +250,13 @@ class App extends React.Component {
 
   render() {
       const userById= (id) => {
-          console.log('userById: ',this.context.store.getState().user.find(user => user.id === id))
+          //console.log('userById: ',this.context.store.getState().user.find(user => user.id === id))
           return this.context.store.getState().user.find(user => user.id === id)
       }
       const blogById = (id) => {
-          return this.state.blogs.find(blog => blog.id === id)
+          const test = this.context.store.getState().blogs.find(blog => blog.id === id)
+          //test? console.log('test: ',test) : ''
+          return this.context.store.getState().blogs.find(blog => blog.id === id)
       }
     
       const sortedBlogs = this.context.store.getState().blogs.sort(function(a, b){ return  b.likes - a.likes})
@@ -476,7 +264,7 @@ class App extends React.Component {
       let stateUser 
     
     
-
+     
       this.context.store.getState().login === null ? 
           stateUser = 'none':
           stateUser = this.context.store.getState().login.name
@@ -572,12 +360,12 @@ class App extends React.Component {
       }
       return (
           <div className='container'>
-              <Router>
+              <HashRouter>
                   <div>
                       <Navbar inverse collapseOnSelect>
                           <Navbar.Header>
                               <Navbar.Brand>
-                TheBlog
+                                    TheBlog
                               </Navbar.Brand>
                               <Navbar.Toggle />
                           </Navbar.Header>
@@ -585,12 +373,12 @@ class App extends React.Component {
                               <Nav>
                                   <LinkContainer to="/blogs">
                                       <NavItem>
-                      Blogs
+                                            Blogs
                                       </NavItem>
                                   </LinkContainer>
                                   <LinkContainer to="/users">
                                       <NavItem>
-                      Users
+                                            Users
                                       </NavItem>
                                   </LinkContainer>
                                   <NavItem>
@@ -604,7 +392,7 @@ class App extends React.Component {
                           <div>
                               <Notification msg={this.context.store.getState().notif} />
                               <TestBlog 
-                                  blog={this.context.store.getState().blogs}
+                                  blog={sortedBlogs}
                                   addingblogs={makeAblogForm()}
                               />
                           </div>
@@ -617,8 +405,10 @@ class App extends React.Component {
                                   addingblogs={makeAblogForm()}
                               />
                           </div>
+                          
                       }/>
                       <Route exact path="/blogs/:id" render={({match}) => 
+                      
                           match.params.id === 'undefined' ?
                               ''
                               :
@@ -629,7 +419,7 @@ class App extends React.Component {
                                       addLikes={this.addLikes}
                                       cancelLikes={this.cancelLikes}
                                       onSubmit={this.addComment}
-                                      allblogs={this.state.blogs}
+                                      allblogs={this.context.store.getState().blogs}
                                       test={this.context.store}
                                   /></div>
                       }
@@ -654,7 +444,7 @@ class App extends React.Component {
                       <Footer />
             
                   </div>
-              </Router>
+              </HashRouter>
           </div>
       )
   }
